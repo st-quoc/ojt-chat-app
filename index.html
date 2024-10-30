@@ -50,7 +50,7 @@
   <script>
     const login = async (e) => {
       e.preventDefault();
-      const username = document.getElementById('username').value;
+      const email = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const response = await fetch('http://localhost:3000/api/users/login', {
         method: 'POST',
@@ -58,15 +58,21 @@
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          username,
+          email,
           password,
         }),
       });
       const data = await response.json();
-      if (data.status === 'success') {
+      sessionStorage.setItem('userID', data.data.user._id);
+      console.log(data);
+      if (data.message === 'Success') {
+        
+        window.location.href = '/pages/chatPage.html';
+        console.log(data);
+        //save user id to session storage
+        
       } else {
-        window.location.href = '/chat';
-        // alert(data.message);
+       
       }
     };
   </script>
