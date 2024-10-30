@@ -1,21 +1,17 @@
-//Tạo models mongose sesion bao gồm các trường: sessionId, userId, firstMess
+// models/session.js
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const SessionSchema = new Schema({
-
-  sessionId: {
-    type: String,
-    required: true,
-  },
-  userId: {
-    type: String,
-    required: true,
-  },
-  firstMess: {
-    type: String,
-    required: true,
-  },
+const sessionSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  sessionData: { type: Object, default: {} },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Session', SessionSchema);
+// Cập nhật `updatedAt` mỗi khi tài liệu được sửa đổi
+sessionSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
+
+module.exports = mongoose.model('Session', sessionSchema);
