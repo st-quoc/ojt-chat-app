@@ -1,51 +1,121 @@
-const typingForm = document.querySelector(".typing-form");
-const chatContainer = document.querySelector(".chat-list");
-const suggestions = document.querySelectorAll(".suggestion");
-const toggleThemeButton = document.querySelector("#theme-toggle-button");
-const deleteChatButton = document.querySelector("#delete-chat-button");
+const typingForm = document.querySelector('.typing-form');
+const chatContainer = document.querySelector('.chat-list');
+const suggestions = document.querySelectorAll('.suggestion');
+const toggleThemeButton = document.querySelector('#theme-toggle-button');
+const deleteChatButton = document.querySelector('#delete-chat-button');
+const userID = sessionStorage.getItem('userID');
+if (!userID) {
+  window.location.href = '/index.html';
+}
+
+// get all sessions by user id using body
+const getAllSessions = async (userID) => {
+  try {
+    const response = await fetch('http://localhost:3000/api/users/getall', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userID }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+const renderSession = (session) => {};
+
+getAllSessions(userID);
+
+//get all session by user id using post method
+const getAllPromtBySessionId = async (sessionID) => {
+  try {
+    const response = await fetch('http://localhost:3000/api/session/getall', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ sessionID }),
+    });
+    const data = await response.json();
+    renderChatContainer(data);
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// render chat container
+const renderChatContainer = (data) => {
+  data.forEach((message) => {
+    const html = `<div class="message-content">
+                    <img class="avatar" src="../assets/img/pumpkin.svg" alt="Gemini avatar">
+                    <p class="text"></p>
+                  </div>
+                  <span onClick="copyMessage(this)" class="icon material-symbols-rounded">content_copy</span>`;
+    const incomingMessageDiv = createMessageElement(html, 'incoming');
+    incomingMessageDiv.querySelector('.text').innerText = message.promtText;
+    chatContainer.appendChild(incomingMessageDiv);
+  });
+};
+
+// save chat to db
+const saveChat = async (data) => {
+  try {
+    const response = await fetch('http://localhost:3000/api/message/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data }),
+      // getAllPromtBySessionId(data.sessionID);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // State variables
 let userMessage = null;
 let isResponseGenerating = false;
 
 // API configuration
-const API_KEY = "AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM"; // Your API key here
+const API_KEY = 'AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM'; // Your API key here
 
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
 // Event listener for the theme toggle button
-toggleThemeButton.addEventListener("click", () => {
-  const isLightMode = document.body.classList.toggle("light_mode");
-  toggleThemeButton.innerText = isLightMode ? "dark_mode" : "light_mode";
-  
+toggleThemeButton.addEventListener('click', () => {
+  const isLightMode = document.body.classList.toggle('light_mode');
+  toggleThemeButton.innerText = isLightMode ? 'dark_mode' : 'light_mode';
   // Save the current theme to local storage
-  localStorage.setItem("themeColor", isLightMode ? "light_mode" : "dark_mode");
+  localStorage.setItem('themeColor', isLightMode ? 'light_mode' : 'dark_mode');
 });
 
 // Load theme and chat data from local storage on page load
 const loadDataFromLocalstorage = () => {
-  const savedChats = localStorage.getItem("saved-chats");
-  const isLightMode = (localStorage.getItem("themeColor") === "light_mode");
+  const savedChats = localStorage.getItem('saved-chats');
+  const isLightMode = localStorage.getItem('themeColor') === 'light_mode';
 
   // Apply the stored theme
-  document.body.classList.toggle("light_mode", isLightMode);
-  toggleThemeButton.innerText = isLightMode ? "dark_mode" : "light_mode";
+  document.body.classList.toggle('light_mode', isLightMode);
+  toggleThemeButton.innerText = isLightMode ? 'dark_mode' : 'light_mode';
 
   // Restore saved chats or clear the chat container
   chatContainer.innerHTML = savedChats || '';
-  document.body.classList.toggle("hide-header", savedChats);
+  document.body.classList.toggle('hide-header', savedChats);
 
   chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to the bottom
-}
-
+};
 
 // Create a new message element and return it
 const createMessageElement = (content, ...classes) => {
-  const div = document.createElement("div");
-  div.classList.add("message", ...classes);
+  const div = document.createElement('div');
+  div.classList.add('message', ...classes);
   div.innerHTML = content;
   return div;
-}
+};
 
 // Show typing effect by displaying words one by one
 const showTypingEffect = (text, textElement, incomingMessageDiv) => {
@@ -54,41 +124,42 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
 
   const typingInterval = setInterval(() => {
     // Append each word to the text element with a space
-    textElement.innerText += (currentWordIndex === 0 ? '' : ' ') + words[currentWordIndex++];
-    incomingMessageDiv.querySelector(".icon").classList.add("hide");
+    textElement.innerText +=
+      (currentWordIndex === 0 ? '' : ' ') + words[currentWordIndex++];
+    incomingMessageDiv.querySelector('.icon').classList.add('hide');
 
     // If all words are displayed
     if (currentWordIndex === words.length) {
       clearInterval(typingInterval);
       isResponseGenerating = false;
-      incomingMessageDiv.querySelector(".icon").classList.remove("hide");
+      incomingMessageDiv.querySelector('.icon').classList.remove('hide');
       createMessageApi({
-        userID: "1234",
-        sessionID: "5678",
-        promtText:  userMessage,
-        promtRepsonse:  text,
-        timestamp: new Date().getTime()
+        userID: '1234',
+        sessionID: '5678',
+        promtText: userMessage,
+        promtRepsonse: text,
+        timestamp: new Date().getTime(),
       }); // Create message in the API
-      localStorage.setItem("saved-chats", chatContainer.innerHTML); // Save chats to local storage
+      localStorage.setItem('saved-chats', chatContainer.innerHTML); // Save chats to local storage
     }
     chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to the bottom
   }, 75);
-}
+};
 
 // Fetch response from the API based on user message
 const generateAPIResponse = async (incomingMessageDiv) => {
-  const textElement = incomingMessageDiv.querySelector(".text"); // Lấy text element
+  const textElement = incomingMessageDiv.querySelector('.text'); // Lấy text element
 
   try {
     // Gửi yêu cầu POST tới API với toàn bộ sessionData
     const response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: sessionData.map(({ role, content }) => ({
           role,
-          parts: [{ text: content }]
-        }))
+          parts: [{ text: content }],
+        })),
       }),
     });
 
@@ -96,19 +167,22 @@ const generateAPIResponse = async (incomingMessageDiv) => {
     if (!response.ok) throw new Error(data.error.message);
 
     // Lấy phản hồi từ API và lưu vào sessionData
-    const apiResponse = data?.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
-    sessionData.push({ role: "model", content: apiResponse }); // Lưu phản hồi với vai trò "model"
+    const apiResponse = data?.candidates[0].content.parts[0].text.replace(
+      /\*\*(.*?)\*\*/g,
+      '$1'
+    );
+    sessionData.push({ role: 'model', content: apiResponse }); // Lưu phản hồi với vai trò "model"
     console.log(sessionData);
 
     renderResponse(apiResponse, textElement);
   } catch (error) {
     isResponseGenerating = false;
     textElement.innerText = error.message;
-    textElement.parentElement.closest(".message").classList.add("error");
+    textElement.parentElement.closest('.message').classList.add('error');
   } finally {
-    incomingMessageDiv.classList.remove("loading");
+    incomingMessageDiv.classList.remove('loading');
   }
-}
+};
 const renderResponse = (response, textElement) => {
   // Sử dụng regex để tách code block (nếu có)
   const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g; // Lấy ngôn ngữ và mã code
@@ -126,10 +200,10 @@ const renderResponse = (response, textElement) => {
     }
 
     // Tạo code block với Prism.js syntax highlight
-    const pre = document.createElement("pre");
-    const codeElement = document.createElement("code");
+    const pre = document.createElement('pre');
+    const codeElement = document.createElement('code');
     codeElement.className = `language-${
-      language ? language.trim() : "plaintext"
+      language ? language.trim() : 'plaintext'
     }`;
     codeElement.textContent = code.trim();
 
@@ -158,7 +232,7 @@ const renderResponse = (response, textElement) => {
   Prism.highlightAllUnder(textElement);
 
   isResponseGenerating = false;
-  localStorage.setItem("saved-chats", chatContainer.innerHTML); // Lưu đoạn chat vào local storage
+  localStorage.setItem('saved-chats', chatContainer.innerHTML); // Lưu đoạn chat vào local storage
   chatContainer.scrollTo(0, chatContainer.scrollHeight); // Cuộn xuống cuối
 };
 // Show a loading animation while waiting for the API response
@@ -174,53 +248,53 @@ const showLoadingAnimation = () => {
                 </div>
                 <span onClick="copyMessage(this)" class="icon material-symbols-rounded">content_copy</span>`;
 
-  const incomingMessageDiv = createMessageElement(html, "incoming", "loading");
+  const incomingMessageDiv = createMessageElement(html, 'incoming', 'loading');
   chatContainer.appendChild(incomingMessageDiv);
 
   chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to the bottom
   generateAPIResponse(incomingMessageDiv);
-}
+};
 
 // Copy message text to the clipboard
 const copyMessage = (copyButton) => {
-  const messageText = copyButton.parentElement.querySelector(".text").innerText;
+  const messageText = copyButton.parentElement.querySelector('.text').innerText;
 
   navigator.clipboard.writeText(messageText);
-  copyButton.innerText = "done"; // Show confirmation icon
-  setTimeout(() => copyButton.innerText = "content_copy", 1000); // Revert icon after 1 second
-}
+  copyButton.innerText = 'done'; // Show confirmation icon
+  setTimeout(() => (copyButton.innerText = 'content_copy'), 1000); // Revert icon after 1 second
+};
 
 // Handle sending outgoing chat messages
 let sessionData = [];
 
-
 // Cập nhật hàm để thêm câu hỏi hiện tại vào sessionData
 const handleOutgoingChat = () => {
-  userMessage = typingForm.querySelector(".typing-input").value.trim() || userMessage;
+  userMessage =
+    typingForm.querySelector('.typing-input').value.trim() || userMessage;
   if (!userMessage || isResponseGenerating) return; // Exit if no message or response is generating
 
   isResponseGenerating = true;
 
   // Save the question with the role as "user"
-  sessionData.push({ role: "user", content: userMessage });
+  sessionData.push({ role: 'user', content: userMessage });
 
   const html = `<div class="message-content">
                   <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
                   <p class="text"></p>
                 </div>`;
 
-  const outgoingMessageDiv = createMessageElement(html, "outgoing");
-  outgoingMessageDiv.querySelector(".text").innerText = userMessage;
+  const outgoingMessageDiv = createMessageElement(html, 'outgoing');
+  outgoingMessageDiv.querySelector('.text').innerText = userMessage;
   chatContainer.appendChild(outgoingMessageDiv);
 
   typingForm.reset(); // Clear the input field
-  document.body.classList.add("hide-header");
+  document.body.classList.add('hide-header');
   chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to the bottom
   setTimeout(showLoadingAnimation, 500); // Show loading animation for response
 
   // Update the session in localStorage
   updateSessionInLocalStorage(currentSessionID, sessionData);
-}
+};
 
 // Function to update the session data in localStorage
 const updateSessionInLocalStorage = (sessionID, sessionData) => {
@@ -228,24 +302,23 @@ const updateSessionInLocalStorage = (sessionID, sessionData) => {
   localStorage.setItem(sessionKey, JSON.stringify(sessionData)); // Save updated sessionData
 };
 
-
 // Delete all chats from local storage when button is clicked
-deleteChatButton.addEventListener("click", () => {
-  if (confirm("Are you sure you want to delete all the chats?")) {
-    localStorage.removeItem("saved-chats");
+deleteChatButton.addEventListener('click', () => {
+  if (confirm('Are you sure you want to delete all the chats?')) {
+    localStorage.removeItem('saved-chats');
 
     // Retrieve the last session index from localStorage
-    let lastSessionIndex = parseInt(localStorage.getItem('lastSessionIndex')) || 0;
-    
+    let lastSessionIndex =
+      parseInt(localStorage.getItem('lastSessionIndex')) || 0;
+
     // Check if picked_sessionId exists in local storage
     const pickedSessionId = localStorage.getItem('picked_sessionId'); // Assuming you store the picked session ID in local storage
     const existingSessionKey = `session_${pickedSessionId}`;
 
     // Check if session_${pickedSessionId} exists
     if (pickedSessionId && localStorage.getItem(existingSessionKey)) {
-      // Update the existing session
-      localStorage.setItem(existingSessionKey, JSON.stringify(sessionData)); // Save the current sessionData
-      localStorage.removeItem('picked_sessionId'); // Remove the picked session ID
+      const data = getSessionById(pickedSessionId);
+      renderResponse(data);
     } else {
       // Create a new session only if sessionData is not empty
       if (sessionData.length > 0) {
@@ -254,15 +327,17 @@ deleteChatButton.addEventListener("click", () => {
         localStorage.setItem(newSessionKey, JSON.stringify(sessionData)); // Save the current sessionData
       } else {
         // Optionally, notify the user that the session is empty
-        alert("No chats to save. Please enter some chats before creating a new session.");
+        alert(
+          'No chats to save. Please enter some chats before creating a new session.'
+        );
       }
     }
 
     // Reset sessionData for a new session
-    sessionData = []; 
+    sessionData = [];
 
     // Update the last session index only if a new session was created
-    localStorage.setItem('lastSessionIndex', lastSessionIndex); 
+    localStorage.setItem('lastSessionIndex', lastSessionIndex);
 
     loadDataFromLocalstorage(); // Load remaining data
 
@@ -270,13 +345,7 @@ deleteChatButton.addEventListener("click", () => {
   }
 });
 
-
-
-
-
-
-
-const sessionList = document.getElementById("session-ul");
+const sessionList = document.getElementById('session-ul');
 
 // Function to load sessions from localStorage and display them
 const loadSessions = () => {
@@ -287,7 +356,7 @@ const loadSessions = () => {
   for (let i = 1; ; i++) {
     const sessionKey = `session_${i}`;
     const sessionData = localStorage.getItem(sessionKey);
-    
+
     // Break the loop if there's no session data for the current key
     if (!sessionData) break;
 
@@ -299,23 +368,24 @@ const loadSessions = () => {
     }
 
     // Create a new list item for each session
-    const li = document.createElement("li");
+    const li = document.createElement('li');
     li.innerText = parsedSessionData[0]?.content || `Chat session ${i}`; // Display the first message or a placeholder
     li.title = `Chat session ${i}`;
-    
+
     // Add click event listener to display the chat content when clicked
-    li.addEventListener("click", () => displaySessionChat(i, parsedSessionData));
-    
+    li.addEventListener('click', () =>
+      displaySessionChat(i, parsedSessionData)
+    );
+
     sessionList.appendChild(li);
   }
 };
-
 
 const displaySessionChat = (sessionID, messages) => {
   // Set the current session ID
   currentSessionID = sessionID;
   console.log(sessionID);
-  localStorage.setItem("picked_sessionId", sessionID); // Save the current chat to local storage
+  localStorage.setItem('picked_sessionId', sessionID); // Save the current chat to local storage
   // Clear the current chat container
   chatContainer.innerHTML = '';
   const header = document.querySelector('.header'); // Replace with the appropriate selector for your header
@@ -327,13 +397,20 @@ const displaySessionChat = (sessionID, messages) => {
   sessionData = []; // Reset sessionData for the new session
 
   // Loop through the messages and append them to the chat container
-  messages.forEach(message => {
-    const messageElement = createMessageElement(`
+  messages.forEach((message) => {
+    const messageElement = createMessageElement(
+      `
       <div class="message-content">
-        <img class="avatar" src="${message.role === 'user' ? '../assets/img/user.jpg' : '../assets/img/pumpkin.svg'}" alt="${message.role === 'user' ? 'User avatar' : 'Gemini avatar'}">
+        <img class="avatar" src="${
+          message.role === 'user'
+            ? '../assets/img/user.jpg'
+            : '../assets/img/pumpkin.svg'
+        }" alt="${message.role === 'user' ? 'User avatar' : 'Gemini avatar'}">
         <p class="text">${message.content}</p>
       </div>
-    `, message.role === 'user' ? 'outgoing' : 'incoming');
+    `,
+      message.role === 'user' ? 'outgoing' : 'incoming'
+    );
 
     chatContainer.appendChild(messageElement);
 
@@ -345,36 +422,27 @@ const displaySessionChat = (sessionID, messages) => {
   chatContainer.scrollTo(0, chatContainer.scrollHeight);
 };
 
-
-
-
-
 // Call this function after deleting chats or when the page loads
 loadSessions();
 
 let currentSessionID = null; // Variable to store the currently active session ID
 
-
-
 // Optionally, you can add an event listener for the "add" button if you want to add new sessions
-document.getElementById("add-button").addEventListener("click", () => {
+document.getElementById('add-button').addEventListener('click', () => {
   // Logic to add a new session can go here
 });
 
-
-
-
 // Set userMessage and handle outgoing chat when a suggestion is clicked
-suggestions.forEach(suggestion => {
-  suggestion.addEventListener("click", () => {
-    userMessage = suggestion.querySelector(".text").innerText;
+suggestions.forEach((suggestion) => {
+  suggestion.addEventListener('click', () => {
+    userMessage = suggestion.querySelector('.text').innerText;
     handleOutgoingChat();
   });
 });
 
 // Prevent default form submission and handle outgoing chat
-typingForm.addEventListener("submit", (e) => {
-  e.preventDefault(); 
+typingForm.addEventListener('submit', (e) => {
+  e.preventDefault();
   handleOutgoingChat();
 });
 
@@ -387,62 +455,72 @@ const createMessageApi = async (data) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data })
+      body: JSON.stringify({ data }),
     });
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-// get all sessions by user id
-const getAllSessions = async (userID) => {
+//get user by user id
+const getUser = async (userID) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/session/getAll/${userID}`);
+    const response = await fetch(
+      `http://localhost:5000/api/session/getAll/${userID}`
+    );
     const data = await response.json();
     return data;
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 // get all messages by session id
 const getAllMessages = async (sessionID) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/message/getAll/${sessionID}`);
+    const response = await fetch(
+      `http://localhost:5000/api/message/getAll/${sessionID}`
+    );
     const data = await response.json();
     return data;
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 // delete session by session id
 const deleteSession = async (sessionID) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/session/delete/${sessionID}`, {
-      method: 'DELETE'
-    });
+    const response = await fetch(
+      `http://localhost:5000/api/session/delete/${sessionID}`,
+      {
+        method: 'DELETE',
+      }
+    );
     const data = await response.json();
     return data;
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 // delte all sessions by user id
 const deleteAllSessions = async (userID) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/session/deleteAll/${userID}`, {
-      method: 'DELETE'
-    });
+    const response = await fetch(
+      `http://localhost:5000/api/session/deleteAll/${userID}`,
+      {
+        method: 'DELETE',
+      }
+    );
     const data = await response.json();
     return data;
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-// cerate a new session
+// create session api
 const createSession = async (data) => {
   try {
     const response = await fetch('http://localhost:5000/api/session/create', {
@@ -450,12 +528,12 @@ const createSession = async (data) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ data })
+      body: JSON.stringify({ data }),
     });
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 // when user login, check lastest session if exist message return it or create new session
 const checkLastestSession = async (userID) => {
@@ -464,35 +542,40 @@ const checkLastestSession = async (userID) => {
     createSession({
       userID,
       sessionID: Math.random().toString(36).substring(7),
-      timestamp: new Date().getTime()
+      timestamp: new Date().getTime(),
     });
   } else {
     const lastestSession = sessions[sessions.length - 1];
     const messages = await getAllMessages(lastestSession.sessionID);
-    messages.forEach(message => {
+    messages.forEach((message) => {
       const html = `<div class="message-content">
                       <img class="avatar" src="../assets/img/pumpkin.svg" alt="Gemini avatar">
                       <p class="text"></p>
                     </div>
                     <span onClick="copyMessage(this)" class="icon material-symbols-rounded">content_copy</span>`;
-      const incomingMessageDiv = createMessageElement(html, "incoming");
-      incomingMessageDiv.querySelector(".text").innerText = message.promtText;
+      const incomingMessageDiv = createMessageElement(html, 'incoming');
+      incomingMessageDiv.querySelector('.text').innerText = message.promtText;
       chatContainer.appendChild(incomingMessageDiv);
     });
   }
-}
+};
 
-document.getElementById("menu-toggle-button").addEventListener("click", function() {
-  loadSessions();
-  const sidebar = document.querySelector(".sidebar");
-  const mainContent = document.querySelector(".main-content");
+document
+  .getElementById('menu-toggle-button')
+  .addEventListener('click', function () {
+    loadSessions();
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
 
-  sidebar.classList.toggle("expanded"); // Mở rộng/thu gọn sidebar
-});
+    sidebar.classList.toggle('expanded'); // Mở rộng/thu gọn sidebar
+  });
 
-document.getElementById("profile-toggle-button").addEventListener("click", function() {
-  const profileMenu = document.getElementById("profile-menu");
-  profileMenu.style.display = profileMenu.style.display === "none" || profileMenu.style.display === "" ? "block" : "none";
-});
-
-
+document
+  .getElementById('profile-toggle-button')
+  .addEventListener('click', function () {
+    const profileMenu = document.getElementById('profile-menu');
+    profileMenu.style.display =
+      profileMenu.style.display === 'none' || profileMenu.style.display === ''
+        ? 'block'
+        : 'none';
+  });
