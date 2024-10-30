@@ -125,7 +125,6 @@ addButton.addEventListener('click', () => {
       localStorage.setItem('picked_sessionId', newSession._id);
       window.location.reload();
     } else {
-
     }
   });
 });
@@ -159,7 +158,6 @@ async function getAllPromts(sessionId) {
     return null;
   }
 }
-
 
 async function createPromt(question, answer) {
   // Lấy sessionId và userId từ local storage
@@ -204,10 +202,6 @@ async function createPromt(question, answer) {
   }
 }
 
-
-
-
-
 // render chat container
 // const renderChatContainer = (data) => {
 //   data.forEach((message) => {
@@ -239,7 +233,6 @@ async function createPromt(question, answer) {
 // };
 
 // State variables
-
 
 // Event listener for the theme toggle button
 toggleThemeButton.addEventListener('click', () => {
@@ -302,51 +295,48 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
   }, 75);
 };
 
-
-
-
 const generateAPIResponse = async (incomingMessageDiv) => {
-  const textElement = incomingMessageDiv.querySelector(".text"); // Lấy text element
+  const textElement = incomingMessageDiv.querySelector('.text'); // Lấy text element
 
   try {
-    console.log("check", sessionData);
+    console.log('check', sessionData);
 
     // Kiểm tra nếu có phần tử chứa question và answer, và thêm chúng vào sessionData nếu chưa có
-    const hasQuestion = sessionData.some(item => item.question);
-    const hasAnswer = sessionData.some(item => item.answer);
+    const hasQuestion = sessionData.some((item) => item.question);
+    const hasAnswer = sessionData.some((item) => item.answer);
 
     if (hasQuestion) {
-      const questionItem = sessionData.find(item => item.question);
+      const questionItem = sessionData.find((item) => item.question);
       sessionData.push({
-        role: "model",
-        content: questionItem.question // Thêm question với role là model
+        role: 'model',
+        content: questionItem.question, // Thêm question với role là model
       });
     }
 
     if (hasAnswer) {
-      const answerItem = sessionData.find(item => item.answer);
+      const answerItem = sessionData.find((item) => item.answer);
       sessionData.push({
-        role: "user",
-        content: answerItem.answer // Thêm answer với role là user
+        role: 'user',
+        content: answerItem.answer, // Thêm answer với role là use
       });
     }
 
     // Lọc sessionData chỉ giữ lại các đối tượng với role và content
     const formattedSessionData = sessionData
-      .filter(item => item.role && item.content) // Giữ lại các item có role và content
+      .filter((item) => item.role && item.content) // Giữ lại các item có role và content
       .map(({ role, content }) => ({
         role,
-        content // Đổi key từ parts[0].text sang content
+        content, // Đổi key từ parts[0].text sang content
       }));
 
     const response = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: formattedSessionData.map(({ role, content }) => ({
           role,
-          parts: [{ text: content }] // Định dạng lại để gửi
-        }))
+          parts: [{ text: content }], // Định dạng lại để gửi
+        })),
       }),
     });
 
@@ -354,14 +344,17 @@ const generateAPIResponse = async (incomingMessageDiv) => {
     if (!response.ok) throw new Error(data.error.message);
 
     // Lấy phản hồi từ API và lưu vào sessionData
-    const apiResponse = data?.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, '$1');
-    
+    const apiResponse = data?.candidates[0].content.parts[0].text.replace(
+      /\*\*(.*?)\*\*/g,
+      '$1'
+    );
+
     // Lưu phản hồi với vai trò "model"
-    sessionData.push({ role: "model", content: apiResponse }); 
-    console.log("check", sessionData);
+    sessionData.push({ role: 'model', content: apiResponse });
+    console.log('check', sessionData);
 
     renderResponse(apiResponse, textElement);
-    
+
     const lastUserQuestion = sessionData[sessionData.length - 2]; // Câu hỏi của người dùng mới nhất
     const lastModelAnswer = sessionData[sessionData.length - 1]; // Câu trả lời của model mới nhất
 
@@ -371,16 +364,11 @@ const generateAPIResponse = async (incomingMessageDiv) => {
   } catch (error) {
     isResponseGenerating = false;
     textElement.innerText = error.message;
-    textElement.parentElement.closest(".message").classList.add("error");
+    textElement.parentElement.closest('.message').classList.add('error');
   } finally {
-    incomingMessageDiv.classList.remove("loading");
+    incomingMessageDiv.classList.remove('loading');
   }
-}
-
-
-
-
-
+};
 
 const renderResponse = (response, textElement) => {
   // Sử dụng regex để tách code block (nếu có)
@@ -465,7 +453,6 @@ const copyMessage = (copyButton) => {
 
 // Handle sending outgoing chat messages
 
-
 // Cập nhật hàm để thêm câu hỏi hiện tại vào sessionData
 const handleOutgoingChat = () => {
   userMessage =
@@ -498,9 +485,8 @@ const handleOutgoingChat = () => {
 // Function to update the session data in localStorage
 // Function to update the session data in localStorage
 const updateSessionInLocalStorage = (sessionData) => {
-
   // Map sessionData to only include role and content
-  const formattedSessionData = sessionData.map(item => {
+  const formattedSessionData = sessionData.map((item) => {
     if (item.question) {
       return { role: 'user', content: item.question };
     } else if (item.answer) {
@@ -512,17 +498,15 @@ const updateSessionInLocalStorage = (sessionData) => {
   sessionData = formattedSessionData;
 };
 
-
 // Delete all chats from local storage when button is clicked
-deleteChatButton.addEventListener("click", () => {
-  if (confirm("Are you sure you want to delete all the chats?")) {
-    localStorage.removeItem("saved-chats");
+deleteChatButton.addEventListener('click', () => {
+  if (confirm('Are you sure you want to delete all the chats?')) {
+    localStorage.removeItem('saved-chats');
     loadDataFromLocalstorage();
   }
 });
 
 const sessionList = document.getElementById('session-ul');
-
 
 // Function to load sessions from the database and display them
 const loadSessions = async () => {
@@ -537,7 +521,10 @@ const loadSessions = async () => {
       const messages = await getAllPromts(session._id);
 
       // Sử dụng question của prompt đầu tiên làm tên session (nếu có), và làm thuộc tính `title`
-      const sessionName = messages && messages.length > 0 ? messages[0].question : `Chat session ${session._id}`;
+      const sessionName =
+        messages && messages.length > 0
+          ? messages[0].question
+          : `Chat session ${session._id}`;
 
       const li = document.createElement('li');
       li.innerText = sessionName; // Dùng question đầu tiên làm tên hiển thị của session
@@ -557,21 +544,14 @@ const loadSessions = async () => {
   }
 };
 
-
-
-
-
-
-
 // Gọi hàm để tải session khi trang được tải
 document.addEventListener('DOMContentLoaded', loadSessions);
-
 
 const displaySessionChat = (sessionID, messages) => {
   // Set the current session ID
   currentSessionID = sessionID;
   console.log(sessionID);
-  localStorage.setItem("picked_sessionId", sessionID); // Save the current chat to local storage
+  localStorage.setItem('picked_sessionId', sessionID); // Save the current chat to local storage
 
   // Clear the current chat container
   chatContainer.innerHTML = '';
@@ -584,26 +564,32 @@ const displaySessionChat = (sessionID, messages) => {
   sessionData = []; // Reset sessionData for the new session
 
   // Loop through the messages and append them to the chat container
-  messages.forEach(message => {
+  messages.forEach((message) => {
     // Hiển thị câu hỏi
     if (message.question) {
-      const questionElement = createMessageElement(`
+      const questionElement = createMessageElement(
+        `
         <div class="message-content">
           <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
           <p class="text">${message.question}</p>
         </div>
-      `, 'outgoing'); // Class cho câu hỏi
+      `,
+        'outgoing'
+      ); // Class cho câu hỏi
       chatContainer.appendChild(questionElement);
     }
 
     // Hiển thị câu trả lời
     if (message.answer) {
-      const answerElement = createMessageElement(`
+      const answerElement = createMessageElement(
+        `
         <div class="message-content">
           <img class="avatar" src="../assets/img/pumpkin.svg" alt="Gemini avatar">
           <p class="text">${message.answer}</p>
         </div>
-      `, 'incoming'); // Class cho câu trả lời
+      `,
+        'incoming'
+      ); // Class cho câu trả lời
       chatContainer.appendChild(answerElement);
     }
 
@@ -613,17 +599,10 @@ const displaySessionChat = (sessionID, messages) => {
   });
 };
 
-
-
-
-
-
-
 // Call this function after deleting chats or when the page loads
 loadSessions();
 
 let currentSessionID = null; // Variable to store the currently active session ID
-
 
 // Set userMessage and handle outgoing chat when a suggestion is clicked
 suggestions.forEach((suggestion) => {
@@ -640,7 +619,6 @@ typingForm.addEventListener('submit', (e) => {
 });
 
 loadDataFromLocalstorage();
-
 
 // when user login, check lastest session if exist message return it or create new session
 const checkLastestSession = async (userID) => {
