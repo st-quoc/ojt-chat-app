@@ -3,6 +3,78 @@ const chatContainer = document.querySelector('.chat-list');
 const suggestions = document.querySelectorAll('.suggestion');
 const toggleThemeButton = document.querySelector('#theme-toggle-button');
 const deleteChatButton = document.querySelector('#delete-chat-button');
+const userID = sessionStorage.getItem('userID');
+if (!userID) {
+  window.location.href = '/index.html';
+}
+
+// get all sessions by user id using body
+const getAllSessions = async (userID) => {
+  try {
+    const response = await fetch('http://localhost:3000/api/users/getall', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userID }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+const renderSession = (session) => {};
+
+getAllSessions(userID);
+
+//get all session by user id using post method
+const getAllPromtBySessionId = async (sessionID) => {
+  try {
+    const response = await fetch('http://localhost:3000/api/session/getall', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ sessionID }),
+    });
+    const data = await response.json();
+    renderChatContainer(data);
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// render chat container
+const renderChatContainer = (data) => {
+  data.forEach((message) => {
+    const html = `<div class="message-content">
+                    <img class="avatar" src="../assets/img/pumpkin.svg" alt="Gemini avatar">
+                    <p class="text"></p>
+                  </div>
+                  <span onClick="copyMessage(this)" class="icon material-symbols-rounded">content_copy</span>`;
+    const incomingMessageDiv = createMessageElement(html, 'incoming');
+    incomingMessageDiv.querySelector('.text').innerText = message.promtText;
+    chatContainer.appendChild(incomingMessageDiv);
+  });
+};
+
+// save chat to db
+const saveChat = async (data) => {
+  try {
+    const response = await fetch('http://localhost:3000/api/message/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data }),
+      // getAllPromtBySessionId(data.sessionID);
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 // State variables
 let userMessage = null;
@@ -17,7 +89,6 @@ const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:
 toggleThemeButton.addEventListener('click', () => {
   const isLightMode = document.body.classList.toggle('light_mode');
   toggleThemeButton.innerText = isLightMode ? 'dark_mode' : 'light_mode';
-
   // Save the current theme to local storage
   localStorage.setItem('themeColor', isLightMode ? 'light_mode' : 'dark_mode');
 });
@@ -246,9 +317,8 @@ deleteChatButton.addEventListener('click', () => {
 
     // Check if session_${pickedSessionId} exists
     if (pickedSessionId && localStorage.getItem(existingSessionKey)) {
-      // Update the existing session
-      localStorage.setItem(existingSessionKey, JSON.stringify(sessionData)); // Save the current sessionData
-      localStorage.removeItem('picked_sessionId'); // Remove the picked session ID
+      const data = getSessionById(pickedSessionId);
+      renderResponse(data);
     } else {
       // Create a new session only if sessionData is not empty
       if (sessionData.length > 0) {
@@ -392,8 +462,8 @@ const createMessageApi = async (data) => {
   }
 };
 
-// get all sessions by user id
-const getAllSessions = async (userID) => {
+//get user by user id
+const getUser = async (userID) => {
   try {
     const response = await fetch(
       `http://localhost:5000/api/session/getAll/${userID}`
@@ -450,7 +520,7 @@ const deleteAllSessions = async (userID) => {
   }
 };
 
-// cerate a new session
+// create session api
 const createSession = async (data) => {
   try {
     const response = await fetch('http://localhost:5000/api/session/create', {

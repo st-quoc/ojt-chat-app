@@ -11,7 +11,6 @@ exports.registerUser = async (req, res) => {
 };
 
 exports.loginUser = async (req, res) => {
-  console.log(req.body);
   try {
     const result = await AuthServices.login(req.body.username, req.body.password);
     ApiResponse.success(res, result);
