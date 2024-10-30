@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="../styles/reset.css" />
+    <link rel="stylesheet" href="../styles/base.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Form</title>
-  <link rel="stylesheet" href="../styles/reset.css">
-  <link rel="stylesheet" href="../styles/base.css">
-</head>
-
-<body>
-  <div class="wrapper">
-    <div class="container">
-      <div class="illustration">
-        <img src="../assets/theme.png" alt="">
-      </div>
-      <div class="form">
-        <h1>Create Account</h1>
-        <form>
-          <label for="username">User Name</label>
-          <input type="text" id="username" name="name" required>
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required>
-          <label for="confirm-password">Confirm Password</label>
-          <input type="password" id="confirm-password" name="confirm-password" required>
-          <button type="submit">Sign Up</button>
-        </form>
-        <p>Already have an account? <a href="#">Login here</a></p>
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <div class="illustration">
+          <img src="../assets/theme.png" alt="" />
+        </div>
+        <div class="form">
+          <h1>Create Account</h1>
+          <form>
+            <label for="username">User Name</label>
+            <input type="text" id="username" name="name" required />
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required />
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+            <label for="confirm-password">Confirm Password</label>
+            <input
+              type="password"
+              id="confirm-password"
+              name="confirm-password"
+              required
+            />
+            <button type="submit">Sign Up</button>
+          </form>
+          <p>
+            Already have an account?
+            <a href="#">Login here</a>
+          </p>
+        </div>
       </div>
     </div>
-  </div>
-</body>
-
+  </body>
 </html>

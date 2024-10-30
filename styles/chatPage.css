@@ -1,6 +1,5 @@
 /* Import Google Font - Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 
 pre {
   background-color: #f4f4f4;
@@ -21,27 +20,25 @@ pre > code {
   color: #333;
 }
 
-
 /* width */
 ::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
-
+  background: #f1f1f1;
+  border-radius: 3px;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: #888;
+  background: #888;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+  background: #555;
 }
 
 * {
@@ -55,7 +52,7 @@ pre > code {
   /* Dark mode colors */
   --text-color: #b9b7b7;
   --subheading-color: #828282;
-  --placeholder-color: #A6A6A6;
+  --placeholder-color: #a6a6a6;
   --primary-color: #242424;
   --secondary-color: #383838;
   --secondary-hover-color: #444;
@@ -64,12 +61,11 @@ pre > code {
 .light_mode {
   /* Light mode colors */
   --text-color: #222;
-  --subheading-color: #A0A0A0;
-  --placeholder-color: #6C6C6C;
-  --primary-color: #FFF;
-  --secondary-color: #E9EEF6;
-  --secondary-hover-color: #DBE1EA;
-
+  --subheading-color: #a0a0a0;
+  --placeholder-color: #6c6c6c;
+  --primary-color: #fff;
+  --secondary-color: #e9eef6;
+  --secondary-hover-color: #dbe1ea;
 }
 
 .light_mode #profile-toggle-button {
@@ -77,29 +73,28 @@ pre > code {
 }
 
 .light_mode #menu-toggle-button {
-  color: #616060; 
+  color: #616060;
 }
 
 .light_mode .sidebar {
   background-color: #f5f5f5; /* Màu nền xám nhạt */
 }
-.light_mode .sidebar.expanded li{
-  color: #616060; 
-
+.light_mode .sidebar.expanded li {
+  color: #616060;
 }
 
 .light_mode .session-list li:hover {
   background-color: #d8d8d8;
 }
 
-
-
 body {
   overflow: hidden;
   background: var(--primary-color);
 }
 
-.header, .chat-list .message, .typing-form {
+.header,
+.chat-list .message,
+.typing-form {
   margin: 0 auto;
   max-width: 980px;
 }
@@ -253,7 +248,7 @@ body.hide-header .header {
   visibility: hidden;
 }
 
-.chat-list .message:not(.loading, .error):hover .icon:not(.hide){
+.chat-list .message:not(.loading, .error):hover .icon:not(.hide) {
   visibility: visible;
 }
 
@@ -390,7 +385,6 @@ body.hide-header .header {
   z-index: 10;
 }
 
-
 @media (max-width: 1190px) {
   .sidebar {
     position: fixed;
@@ -422,7 +416,7 @@ body.hide-header .header {
   z-index: 1000; /* Đảm bảo nút toggle nằm trên các phần tử khác */
 }
 
-#profile-toggle-button  {
+#profile-toggle-button {
   position: fixed;
   top: 20px;
   right: 20px;
@@ -435,7 +429,7 @@ body.hide-header .header {
   z-index: 1000; /* Đảm bảo nút toggle nằm trên các phần tử khác */
 }
 
-#help-button{
+#help-button {
   position: absolute;
   bottom: 20px;
   left: 20px;
@@ -448,7 +442,7 @@ body.hide-header .header {
   transition: left 0.3s ease;
 }
 
-#add-button{
+#add-button {
   padding: 0 3px;
   position: absolute;
   font-size: 40px;
@@ -458,15 +452,13 @@ body.hide-header .header {
   color: #97999e;
   outline: none;
   left: 17px;
-  border: #a8abb0 1px solid;  
+  border: #a8abb0 1px solid;
   border-radius: 17px;
   transition: left 0.3s ease;
 }
-#add-button:hover{
+#add-button:hover {
   background-color: #444;
 }
-
-
 
 .sidebar.expanded #add-button {
   padding: 0 40px;
@@ -474,20 +466,18 @@ body.hide-header .header {
   left: 45px;
 }
 .sidebar.expanded {
-
   width: 220px;
-
 }
 
-.sidebar.expanded #help-button{ 
+.sidebar.expanded #help-button {
   left: 85px;
 }
 
-.wraper{
+.wraper {
   display: flex;
 }
-.body-chat{
-  flex:1;
+.body-chat {
+  flex: 1;
   position: relative;
 }
 
@@ -527,13 +517,11 @@ body.hide-header .header {
   background-color: #6b6b6b; /* Thay đổi màu nền khi hover */
 }
 
-
 /* Session List */
 .session-list {
   margin-top: 60px;
   padding: 0px;
   color: #c2c2c2;
-  
 }
 
 .session-list h3 {
@@ -570,10 +558,6 @@ body.hide-header .header {
 .session-list li:hover {
   background-color: #444;
 }
-
-
-
-
 
 /* Responsive media query code for small screen */
 @media (max-width: 768px) {
