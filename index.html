@@ -1,71 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Form</title>
+    <link rel="stylesheet" href="./styles/reset.css" />
+    <link rel="stylesheet" href="./styles/base.css" />
+    <link rel="stylesheet" href="./styles/login.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login Form</title>
-  <link rel="stylesheet" href="./styles/reset.css" />
-  <link rel="stylesheet" href="./styles/base.css" />
-  <link rel="stylesheet" href="./styles/login.css" />
-</head>
+  <body>
+    <div class="wrapper">
+      <div class="container">
+        <div class="illustration">
+          <img src="./assets/theme.png" alt="" />
+        </div>
+        <div class="form">
+          <h1>Welcome To S Tier</h1>
+          <form>
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Enter your username"
+              required
+            />
 
-<body>
-  <div class="wrapper">
-    <div class="container">
-      <div class="illustration">
-        <img src="./assets/theme.png" alt="" />
-      </div>
-      <div class="form">
-        <h1>Welcome To S Tier</h1>
-        <form>
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" placeholder="Enter your username" required />
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+              pattern="^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"
+              title="Password must contain at least one uppercase letter, on special character (!@$%^&*), and be at least 8 characters long."
+            />
 
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" required
-            pattern="^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"
-            title="Password must contain at least one uppercase letter, on special character (!@$%^&*), and be at least 8 characters long." />
-
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" placeholder="Enter your password" required
-            title="Password must contain at least one uppercase letter, on special character (!@$%^&*), and be at least 8 characters long.">
-
-          <a href="#" class="forgot-password">Forgot password?</a>
-          <button type="submit" onclick="login(event)">Login</button>
-          <p>Have not account yet?</p>
-          <a href="#" class="create-account">Sign up</a>
-        </form>
+            <a href="#" class="forgot-password">Forgot password?</a>
+            <button type="submit" onclick="login(event)">Login</button>
+            <p>Have not account yet?</p>
+            <a href="#" class="create-account">Sign up</a>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-
-
-</body>
-<script>
-  const login = async (e) => {
-    e.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    const response = await fetch('http://localhost:3000/api/users/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username, password })
-    });
-
-    const { data } = await response.json();
-
-    if (data.user._id) {
-      sessionStorage.setItem("userID", data.user._id);
-      window.location.href = '/pages/chatPage.html';
-    } else {
-      window.location.href = '/index.html';
-      console.log('Invalid email or password');
-    }
-  }
-</script>
-
+  </body>
+  <script>
+    const login = async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const response = await fetch('http://localhost:3000/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+      } else {
+        window.location.href = '/chat';
+        // alert(data.message);
+      }
+    };
+  </script>
 </html>
