@@ -12,7 +12,7 @@ exports.registerUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   try {
-    const result = await AuthServices.login(req.body.username, req.body.password);
+    const result = await AuthServices.login(req.body.email, req.body.password);
     ApiResponse.success(res, result);
   } catch (error) {
     ApiResponse.error(res, error.message, 401);
