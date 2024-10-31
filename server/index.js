@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const { mongoConnect } = require("./config/db");
 const errorHandler = require("./middlewares/ErrorMiddleware");
 const UserRoutes = require("./routes/UserRoutes");
+const apiRoutes = require("./routes/api");
 const path = require("path"); // Import path module
 
 dotenv.config();
@@ -26,11 +27,14 @@ app.use(errorHandler);
 
 // User routes
 app.use("/api/users", UserRoutes);
+app.use('/api', apiRoutes);
+
+
 
 // Connect to MongoDB
 mongoConnect();
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, function (error) {
   if (error) {
     console.log("Something went wrong");
