@@ -13,6 +13,11 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css"
     />
     <link rel="stylesheet" href="../styles/chatPage.css" />
+    <link
+      href="https://www.cssscript.com/demo/alert-confirm-toast-cute/style.css"
+      rel="stylesheet"
+      type="text/css"
+    />
   </head>
 
   <body>
@@ -27,7 +32,7 @@
       <ul>
         <li>View Profile</li>
         <li>Settings</li>
-        <li>Logout</li>
+        <li class="logout">Logout</li>
       </ul>
     </div>
 
@@ -119,5 +124,22 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
     <script src="../js/chat.js"></script>
+    <script src="https://www.cssscript.com/demo/alert-confirm-toast-cute/cute-alert.js"></script>
+    <script>
+      // Logout
+      document.querySelector('.logout').addEventListener('click', () => {
+        cuteAlert({
+          type: 'question',
+          title: 'Logout',
+          message: 'Are you sure you want to logout?',
+          confirmText: 'Yes',
+          cancelText: 'No',
+        }).then((e) => {
+          if (e == 'confirm') {
+            window.location.href = '../index.html';
+          }
+        });
+      });
+    </script>
   </body>
 </html>
