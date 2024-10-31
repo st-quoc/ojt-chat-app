@@ -1,0 +1,594 @@
+/* Import Google Font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+pre {
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+code {
+  font-family: monospace;
+  background-color: #f5f2f0;
+  color: #333;
+  padding: 3px;
+  border-radius: 3px;
+}
+pre > code {
+  background-color: unset;
+  font-family: monospace;
+  color: #333;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+:root {
+  /* Dark mode colors */
+  --text-color: #b9b7b7;
+  --subheading-color: #828282;
+  --placeholder-color: #a6a6a6;
+  --primary-color: #242424;
+  --secondary-color: #383838;
+  --secondary-hover-color: #444;
+}
+
+.light_mode {
+  /* Light mode colors */
+  --text-color: #222;
+  --subheading-color: #a0a0a0;
+  --placeholder-color: #6c6c6c;
+  --primary-color: #fff;
+  --secondary-color: #e9eef6;
+  --secondary-hover-color: #dbe1ea;
+}
+
+.light_mode #profile-toggle-button {
+  color: #616060;
+}
+
+.light_mode #menu-toggle-button {
+  color: #616060;
+}
+
+.light_mode .sidebar {
+  background-color: #f5f5f5; /* Màu nền xám nhạt */
+}
+.light_mode .sidebar.expanded li {
+  color: #616060;
+}
+
+.light_mode .session-list li:hover {
+  background-color: #d8d8d8;
+}
+
+body {
+  overflow: hidden;
+  background: var(--primary-color);
+}
+
+.header,
+.chat-list .message,
+.typing-form {
+  margin: 0 auto;
+  max-width: 980px;
+}
+
+.header {
+  margin-top: 6vh;
+  padding: 1rem;
+  overflow-x: hidden;
+}
+
+body.hide-header .header {
+  margin: 0;
+  display: none;
+}
+
+.header :where(.title, .subtitle) {
+  color: var(--text-color);
+  font-weight: 500;
+  line-height: 4rem;
+}
+
+.header .title {
+  width: fit-content;
+  font-size: 3rem;
+  background-clip: text;
+  background: linear-gradient(to right, #4285f4, #d96570);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header .subtitle {
+  font-size: 2.6rem;
+  color: var(--subheading-color);
+}
+
+.suggestion-list {
+  width: 100%;
+  list-style: none;
+  display: flex;
+  gap: 1.25rem;
+  margin-top: 9.5vh;
+  overflow: hidden;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.suggestion-list .suggestion {
+  cursor: pointer;
+  padding: 1.25rem;
+  width: 222px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  border-radius: 0.75rem;
+  justify-content: space-between;
+  background: var(--secondary-color);
+  transition: 0.2s ease;
+}
+
+.suggestion-list .suggestion:hover {
+  background: var(--secondary-hover-color);
+}
+
+.suggestion-list .suggestion :where(.text, .icon) {
+  font-weight: 400;
+  color: var(--text-color);
+}
+
+.suggestion-list .suggestion .icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  font-size: 1.3rem;
+  margin-top: 2.5rem;
+  align-self: flex-end;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  color: var(--text-color);
+  background: var(--primary-color);
+}
+
+.chat-list {
+  padding: 20px 1rem 12rem;
+  max-height: 100vh;
+  overflow-y: auto;
+  scrollbar-color: #999 transparent;
+  margin-top: 70px;
+}
+
+.chat-list .message.incoming {
+  margin-top: 1.5rem;
+}
+
+.chat-list .message .message-content {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+  align-items: center;
+}
+
+.chat-list .message .text {
+  color: var(--text-color);
+  white-space: pre-wrap;
+}
+
+.chat-list .message.error .text {
+  color: #e55865;
+}
+
+.chat-list .message.loading .text {
+  display: none;
+}
+
+.chat-list .message .avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  align-self: flex-start;
+}
+
+.chat-list .message.loading .avatar {
+  animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.chat-list .message .icon {
+  color: var(--text-color);
+  cursor: pointer;
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  font-size: 1.25rem;
+  margin-left: 3.5rem;
+  visibility: hidden;
+}
+
+.chat-list .message .icon.hide {
+  visibility: hidden;
+}
+
+.chat-list .message:not(.loading, .error):hover .icon:not(.hide) {
+  visibility: visible;
+}
+
+.chat-list .message .icon:hover {
+  background: var(--secondary-hover-color);
+}
+
+.chat-list .message .loading-indicator {
+  display: none;
+  gap: 0.8rem;
+  width: 100%;
+  flex-direction: column;
+}
+
+.chat-list .message.loading .loading-indicator {
+  display: flex;
+}
+
+.chat-list .message .loading-indicator .loading-bar {
+  height: 11px;
+  width: 100%;
+  border-radius: 0.135rem;
+  background-position: -800px 0;
+  background: linear-gradient(to right, #4285f4, var(--primary-color), #4285f4);
+  animation: loading 3s linear infinite;
+}
+
+.chat-list .message .loading-indicator .loading-bar:last-child {
+  width: 70%;
+}
+
+@keyframes loading {
+  0% {
+    background-position: -800px 0;
+  }
+
+  100% {
+    background-position: 800px 0;
+  }
+}
+
+.typing-area {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  padding: 1rem;
+  background: var(--primary-color);
+}
+
+.typing-area :where(.typing-form, .action-buttons) {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.typing-form .input-wrapper {
+  width: 100%;
+  height: 56px;
+  display: flex;
+  position: relative;
+}
+
+.typing-form .typing-input {
+  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 1rem;
+  color: var(--text-color);
+  padding: 1.1rem 4rem 1.1rem 1.5rem;
+  border-radius: 100px;
+  background: var(--secondary-color);
+}
+
+.typing-form .typing-input:focus {
+  background: var(--secondary-hover-color);
+}
+
+.typing-form .typing-input::placeholder {
+  color: var(--placeholder-color);
+}
+
+.typing-area .icon {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  font-size: 1.4rem;
+  color: var(--text-color);
+  align-items: center;
+  justify-content: center;
+  background: var(--secondary-color);
+  transition: 0.2s ease;
+}
+
+.typing-area .icon:hover {
+  background: var(--secondary-hover-color);
+}
+
+.typing-form #send-message-button {
+  position: absolute;
+  right: 0;
+  outline: none;
+  border: none;
+  transform: scale(0);
+  background: transparent;
+  transition: transform 0.2s ease;
+}
+
+.typing-form .typing-input:valid ~ #send-message-button {
+  transform: scale(1);
+}
+
+.typing-area .disclaimer-text {
+  text-align: center;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  color: var(--placeholder-color);
+}
+
+/* Menu Toggle Button */
+/* Sidebar with full screen height */
+.sidebar {
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 80px; /* Chiều rộng mặc định khi mở */
+  background-color: #333;
+  transition: transform 0.3s ease, width 0.3s ease;
+  overflow: hidden;
+  z-index: 10;
+}
+
+@media (max-width: 1190px) {
+  .sidebar {
+    position: fixed;
+    transform: translateX(-200px); /* Ẩn sidebar ra khỏi màn hình */
+    z-index: 998;
+  }
+
+  .sidebar.expanded {
+    transform: translateX(0); /* Hiển thị sidebar khi mở rộng */
+  }
+
+  /* Đẩy phần chính sang phải khi sidebar mở */
+  .main-content.shifted {
+    margin-left: 200px;
+    transition: margin-left 0.3s ease;
+  }
+}
+
+#menu-toggle-button {
+  position: fixed;
+  top: 20px;
+  left: 25px;
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #a09e9e;
+  outline: none;
+  z-index: 1000; /* Đảm bảo nút toggle nằm trên các phần tử khác */
+}
+
+#profile-toggle-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  font-size: 40px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #a09e9e;
+  outline: none;
+  z-index: 1000; /* Đảm bảo nút toggle nằm trên các phần tử khác */
+}
+
+#help-button {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  font-size: 30px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #a09e9e;
+  outline: none;
+  transition: left 0.3s ease;
+}
+
+#add-button {
+  padding: 0 3px;
+  position: absolute;
+  font-size: 40px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #97999e;
+  outline: none;
+  left: 17px;
+  border: #a8abb0 1px solid;
+  border-radius: 17px;
+  transition: left 0.3s ease;
+}
+#add-button:hover {
+  background-color: #444;
+}
+
+.sidebar.expanded #add-button {
+  padding: 0 40px;
+  position: relative;
+  left: 45px;
+}
+.sidebar.expanded {
+  width: 220px;
+}
+
+.sidebar.expanded #help-button {
+  left: 85px;
+}
+
+.wraper {
+  display: flex;
+}
+.body-chat {
+  flex: 1;
+  position: relative;
+}
+
+.profile-menu {
+  display: none; /* Ẩn menu profile mặc định */
+  position: absolute; /* Đặt vị trí tuyệt đối để menu không ảnh hưởng đến layout khác */
+  top: 60px; /* Vị trí menu dưới button profile */
+  right: 35px; /* Vị trí menu bên phải */
+  background-color: rgb(134, 134, 134); /* Màu nền của menu */
+  border: 1px solid #3f3f3f; /* Viền cho menu */
+  border-radius: 5px; /* Bo tròn các góc */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
+  z-index: 1000; /* Đảm bảo menu nằm trên các phần tử khác */
+}
+
+.light_mode .profile-menu {
+  background-color: #f5f5f5; /* Màu nền xám nhạt */
+  border: #6b6b6b 1px solid; /* Viền cho menu */
+}
+.light_mode .profile-menu li:hover {
+  background-color: #bdbbbb; /* Màu nền xám nhạt */
+}
+
+.profile-menu ul {
+  list-style: none; /* Loại bỏ dấu đầu dòng */
+  margin: 10; /* Đặt margin về 0 */
+  padding: 0; /* Đặt padding về 0 để không có khoảng cách thừa */
+}
+
+.profile-menu li {
+  width: 100%;
+  padding: 8px 40px; /* Padding cho từng mục menu */
+  cursor: pointer; /* Thay đổi con trỏ khi hover */
+}
+
+.profile-menu li:hover {
+  background-color: #6b6b6b; /* Thay đổi màu nền khi hover */
+}
+
+/* Session List */
+.session-list {
+  margin-top: 60px;
+  padding: 0px;
+  color: #c2c2c2;
+}
+
+.session-list h3 {
+  margin: 0;
+  font-size: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #555;
+  margin-left: 10px;
+  display: none;
+}
+
+.session-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.session-list li {
+  padding: 10px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #555;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 120px; /* Tùy chỉnh lại kích thước cho phù hợp */
+  display: none;
+}
+
+.sidebar.expanded .session-list li {
+  max-width: none;
+  display: block;
+}
+
+.session-list li:hover {
+  background-color: #444;
+}
+
+/* Responsive media query code for small screen */
+@media (max-width: 768px) {
+  .header :is(.title, .subtitle) {
+    font-size: 2rem;
+    line-height: 2.6rem;
+  }
+
+  .header .subtitle {
+    font-size: 1.7rem;
+  }
+
+  .typing-area :where(.typing-form, .action-buttons) {
+    gap: 0.4rem;
+  }
+
+  .typing-form .input-wrapper {
+    height: 50px;
+  }
+
+  .typing-form .typing-input {
+    padding: 1.1rem 3.5rem 1.1rem 1.2rem;
+  }
+
+  .typing-area .icon {
+    height: 50px;
+    width: 50px;
+  }
+
+  .typing-area .disclaimer-text {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+  }
+}

@@ -1,5 +1,3 @@
-const BASE_URL = 'http://localhost:3000';
-
 const typingForm = document.querySelector('.typing-form');
 const chatContainer = document.querySelector('.chat-list');
 const suggestions = document.querySelectorAll('.suggestion');
@@ -13,7 +11,7 @@ if (!userID) {
 // get all sessions by user id using body
 const getAllSessions = async (userID) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/users/getall`, {
+    const response = await fetch('http://localhost:3000/api/users/getall', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,7 +31,7 @@ getAllSessions(userID);
 //get all session by user id using post method
 const getAllPromtBySessionId = async (sessionID) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/session/getall`, {
+    const response = await fetch('http://localhost:3000/api/session/getall', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -65,7 +63,7 @@ const renderChatContainer = (data) => {
 // save chat to db
 const saveChat = async (data) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/message/create`, {
+    const response = await fetch('http://localhost:3000/api/message/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -263,12 +261,7 @@ const copyMessage = (copyButton) => {
 
   navigator.clipboard.writeText(messageText);
   copyButton.innerText = 'done'; // Show confirmation icon
-
-  cuteToast({
-    type: 'success',
-    message: 'Copied to clipboard',
-    time: 2000,
-  });
+  setTimeout(() => (copyButton.innerText = 'content_copy'), 1000); // Revert icon after 1 second
 };
 
 // Handle sending outgoing chat messages
@@ -457,7 +450,7 @@ loadDataFromLocalstorage();
 
 const createMessageApi = async (data) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/message/create`, {
+    const response = await fetch('http://localhost:5000/api/message/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -472,7 +465,9 @@ const createMessageApi = async (data) => {
 //get user by user id
 const getUser = async (userID) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/session/getAll/${userID}`);
+    const response = await fetch(
+      `http://localhost:5000/api/session/getAll/${userID}`
+    );
     const data = await response.json();
     return data;
   } catch (error) {
@@ -483,7 +478,9 @@ const getUser = async (userID) => {
 // get all messages by session id
 const getAllMessages = async (sessionID) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/message/getAll/${sessionID}`);
+    const response = await fetch(
+      `http://localhost:5000/api/message/getAll/${sessionID}`
+    );
     const data = await response.json();
     return data;
   } catch (error) {
@@ -495,7 +492,7 @@ const getAllMessages = async (sessionID) => {
 const deleteSession = async (sessionID) => {
   try {
     const response = await fetch(
-      `${BASE_URL}/api/session/delete/${sessionID}`,
+      `http://localhost:5000/api/session/delete/${sessionID}`,
       {
         method: 'DELETE',
       }
@@ -511,7 +508,7 @@ const deleteSession = async (sessionID) => {
 const deleteAllSessions = async (userID) => {
   try {
     const response = await fetch(
-      `${BASE_URL}/api/session/deleteAll/${userID}`,
+      `http://localhost:5000/api/session/deleteAll/${userID}`,
       {
         method: 'DELETE',
       }
@@ -526,7 +523,7 @@ const deleteAllSessions = async (userID) => {
 // create session api
 const createSession = async (data) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/session/create`, {
+    const response = await fetch('http://localhost:5000/api/session/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

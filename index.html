@@ -3,21 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<<<<<<< Updated upstream
-    <title>Document</title>
-  </head>
-  <body></body>
-=======
     <title>Login Form</title>
     <link rel="stylesheet" href="./styles/reset.css" />
     <link rel="stylesheet" href="./styles/base.css" />
     <link rel="stylesheet" href="./styles/login.css" />
-    <link
-      href="https://www.cssscript.com/demo/alert-confirm-toast-cute/style.css"
-      rel="stylesheet"
-      type="text/css"
-    />
   </head>
+
   <body>
     <div class="wrapper">
       <div class="container">
@@ -27,12 +18,12 @@
         <div class="form">
           <h1>Welcome To S Tier</h1>
           <form>
-            <label for="username">Email</label>
+            <label for="username">Username</label>
             <input
               type="text"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
+              id="username"
+              name="username"
+              placeholder="Enter your username"
               required
             />
 
@@ -44,7 +35,7 @@
               placeholder="Enter your password"
               required
               pattern="^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"
-              title="Password must contain at least one uppercase letter, one special character (!@$%^&*), and be at least 8 characters long."
+              title="Password must contain at least one uppercase letter, on special character (!@$%^&*), and be at least 8 characters long."
             />
 
             <a href="#" class="forgot-password">Forgot password?</a>
@@ -55,63 +46,31 @@
         </div>
       </div>
     </div>
-
-    <script>
-      async function login(event) {
-        event.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        try {
-          const response = await fetch(
-            'http://localhost:3000/api/users/login',
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                email,
-                password,
-              }),
-            }
-          );
-          const data = await response.json();
-          if (response.ok && data.message === 'Success') {
-            // Notification when login success
-            cuteToast({
-              type: 'success',
-              title: 'Login Successfully',
-              message: data.message,
-              time: 2000,
-            });
-
-            sessionStorage.setItem('userID', data.data.user._id);
-
-            // delay 5s when login success
-            setTimeout(() => {
-              window.location.href = '/pages/chatPage.html';
-            }, 850);
-          } else {
-            // Alert the user that the login failed
-            cuteToast({
-              type: 'error',
-              title: 'Error',
-              message: data.message,
-              time: 3000,
-            });
-          }
-        } catch (error) {
-          displayErrorMessage('Network error or server is down');
-        }
-      }
-
-      function displayErrorMessage(message) {
-        const errorMessage = document.getElementById('error-message');
-        errorMessage.textContent = 'Login failed: ' + message;
-        errorMessage.style.display = 'block';
-      }
-    </script>
-    <script src="https://www.cssscript.com/demo/alert-confirm-toast-cute/cute-alert.js"></script>
   </body>
->>>>>>> Stashed changes
+  <script>
+    const login = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const response = await fetch('http://localhost:3000/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const data = await response.json();
+      sessionStorage.setItem('userID', data.data.user._id);
+      console.log(data);
+      if (data.message === 'Success') {
+        window.location.href = '/pages/chatPage.html';
+        console.log(data);
+        //save user id to session storage
+      } else {
+      }
+    };
+  </script>
 </html>
