@@ -110,3 +110,18 @@
 .form p a:hover {
   text-decoration: underline;
 }
+
+@media (max-width: 768px) {
+  .container{
+    width: calc(100vw - 32px);
+
+  }
+
+.illustration{
+  display: none;
+}
+  
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  
+}
