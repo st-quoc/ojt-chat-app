@@ -28,7 +28,7 @@ async function getAllSessions() {
     return null;
   }
 
-  const url = `http://localhost:3000/api/sessions/${userId}`;
+  const url = `https://arcane-sea-85415-cb9bc29a925f.herokuapp.com/api/sessions/${userId}`;
 
   try {
     const response = await fetch(url, {
@@ -73,7 +73,7 @@ async function deletePrompts(sessionId) {
 
 async function deleteSessionById(sessionId) {
   try {
-    const response = await fetch(`http://localhost:3000/api/delasessions/`, {
+    const response = await fetch(`https://arcane-sea-85415-cb9bc29a925f.herokuapp.com/api/delasessions/`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ document.querySelector('.deleteAll').addEventListener('click', () => {
   }).then(async (e) => {
     if (e == 'confirm') {
       try {
-        const response = await fetch(`http://localhost:3000/api/sessions`, {
+        const response = await fetch(`https://arcane-sea-85415-cb9bc29a925f.herokuapp.com/api/sessions`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ async function createSession(sessionData) {
     return null;
   }
 
-  const url = 'http://localhost:3000/api/sessions';
+  const url = 'https://arcane-sea-85415-cb9bc29a925f.herokuapp.com/api/sessions';
 
   const bodyData = {
     userId: userId,
@@ -197,7 +197,7 @@ async function getAllPromts(sessionId) {
     return null;
   }
 
-  const url = `http://localhost:3000/api/promts/${sessionId}`;
+  const url = `https://arcane-sea-85415-cb9bc29a925f.herokuapp.com/api/promts/${sessionId}`;
 
   try {
     const response = await fetch(url, {
@@ -228,7 +228,7 @@ async function createPromt(question, answer) {
     return null;
   }
 
-  const url = 'http://localhost:3000/api/promts';
+  const url = 'https://arcane-sea-85415-cb9bc29a925f.herokuapp.com/api/promts';
 
   const promtData = {
     sessionId,
@@ -277,7 +277,7 @@ async function createPromt(question, answer) {
 // save chat to db
 // const saveChat = async (data) => {
 //   try {
-//     const response = await fetch('http://localhost:3000/api/message/create', {
+//     const response = await fetch('https://arcane-sea-85415-cb9bc29a925f.herokuapp.com/api/message/create', {
 //       method: 'POST',
 //       headers: {
 //         'Content-Type': 'application/json',
