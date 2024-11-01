@@ -7,6 +7,11 @@
   <title>Registration Form</title>
   <link rel="stylesheet" href="../styles/reset.css">
   <link rel="stylesheet" href="../styles/base.css">
+  <link
+  href="https://www.cssscript.com/demo/alert-confirm-toast-cute/style.css"
+  rel="stylesheet"
+  type="text/css"
+/>
 </head>
 
   <body>
@@ -42,6 +47,7 @@
     </div>
   </div>
 </body>
+<script src="https://www.cssscript.com/demo/alert-confirm-toast-cute/cute-alert.js"></script>
 <script>
   const register = async (e) => {
     e.preventDefault();
@@ -51,7 +57,12 @@
     const confirmPassword = document.getElementById('confirm-password').value;
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match!");
+      // Passwords not match
+      cuteToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Passwords do not match'
+      })
       return;
     }
 
@@ -70,7 +81,17 @@
     const data = await response.json();
     console.log(data)
     if (data.message === 'User registered successfully') {
-      window.location.href = '/index.html'; 
+      cuteToast({
+        type: 'success',
+        title: 'Success',
+        message: 'User registered successfully'
+      })
+
+      // Redirect to login page timeout
+      setTimeout(() => {
+        window.location.href = '/index.html';
+      }), 4000
+
     } else {
       alert(data.message); 
     }
