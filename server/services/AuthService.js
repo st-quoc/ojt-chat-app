@@ -15,5 +15,7 @@ exports.login = async (email, password) => {
   const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
     expiresIn: '1d',
   });
-  return { token, message: 'Login Successfully!' };
+  userId = user._id;
+  return { userId, message: 'Login Successfully!' };
 };
+
