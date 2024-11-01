@@ -134,6 +134,8 @@ body.hide-header .header {
   width: 100%;
   list-style: none;
   display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
   gap: 1.25rem;
   margin-top: 9.5vh;
   overflow: hidden;
@@ -154,6 +156,21 @@ body.hide-header .header {
   justify-content: space-between;
   background: var(--secondary-color);
   transition: 0.2s ease;
+}
+@media screen and (max-width: 976px) {
+  .suggestion-list .suggestion:last-child {
+    display: none;
+  }
+}
+@media screen and (max-width: 740px) {
+  .suggestion-list .suggestion:nth-child(2) {
+    display: none;
+  }
+}
+@media screen and (max-width: 510px) {
+  .suggestion-list .suggestion:nth-child(1) {
+    display: none;
+  }
 }
 
 .suggestion-list .suggestion:hover {
@@ -306,7 +323,6 @@ body.hide-header .header {
 
 .typing-form .input-wrapper {
   width: 100%;
-  height: 56px;
   display: flex;
   position: relative;
 }
@@ -320,7 +336,7 @@ body.hide-header .header {
   font-size: 1rem;
   color: var(--text-color);
   padding: 1.1rem 4rem 1.1rem 1.5rem;
-  border-radius: 100px;
+  border-radius: 12px;
   background: var(--secondary-color);
 }
 
@@ -365,23 +381,14 @@ body.hide-header .header {
   transform: scale(1);
 }
 
-.typing-area .disclaimer-text {
-  text-align: center;
-  font-size: 0.85rem;
-  margin-top: 1rem;
-  color: var(--placeholder-color);
-}
-
 /* Menu Toggle Button */
 /* Sidebar with full screen height */
 .sidebar {
-  top: 0;
-  left: 0;
+  position: relative;
   height: 100vh;
   width: 80px; /* Chiều rộng mặc định khi mở */
   background-color: #333;
   transition: transform 0.3s ease, width 0.3s ease;
-  overflow: hidden;
   z-index: 10;
 }
 
@@ -443,27 +450,37 @@ body.hide-header .header {
 }
 
 #add-button {
-  padding: 0 3px;
-  position: absolute;
-  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid #a8abb0;
+  width: 80%;
+  margin: 0 auto;
+  border-radius: 12px;
+  cursor: pointer;
+}
+#add-button .icon {
   cursor: pointer;
   background: none;
   border: none;
   color: #97999e;
   outline: none;
-  left: 17px;
-  border: #a8abb0 1px solid;
-  border-radius: 17px;
   transition: left 0.3s ease;
+  font-size: 40px;
+  line-height: 1;
 }
-#add-button:hover {
-  background-color: #444;
+#add-button .text {
+  display: none;
 }
 
-.sidebar.expanded #add-button {
-  padding: 0 40px;
-  position: relative;
-  left: 45px;
+.sidebar.expanded #add-button .text {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 .sidebar.expanded {
   width: 220px;
@@ -475,10 +492,13 @@ body.hide-header .header {
 
 .wraper {
   display: flex;
+  height: 100vh;
 }
 .body-chat {
   flex: 1;
   position: relative;
+  height: 100%;
+  z-index: 1;
 }
 
 .profile-menu {
@@ -522,8 +542,9 @@ body.hide-header .header {
   margin-top: 60px;
   padding: 0px;
   color: #c2c2c2;
+  max-height: 600px; /* Adjust height based on your preference */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
-
 .session-list h3 {
   margin: 0;
   font-size: 18px;
@@ -552,7 +573,26 @@ body.hide-header .header {
 
 .sidebar.expanded .session-list li {
   max-width: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.sidebar.expanded .session-list li p {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+}
+
+.sidebar.expanded .session-list li .delete-session-button {
+  display: none;
+}
+.sidebar.expanded .session-list li:hover .delete-session-button {
   display: block;
+  cursor: pointer;
+  color: #e55865;
 }
 
 .session-list li:hover {
@@ -585,10 +625,5 @@ body.hide-header .header {
   .typing-area .icon {
     height: 50px;
     width: 50px;
-  }
-
-  .typing-area .disclaimer-text {
-    font-size: 0.75rem;
-    margin-top: 0.5rem;
   }
 }
