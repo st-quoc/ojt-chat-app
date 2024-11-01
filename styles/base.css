@@ -125,3 +125,25 @@
 @media (min-width: 768px) and (max-width: 1024px) {
   
 }
+
+
+@keyframes backgroundAnimation {
+  0% {
+      background: #5B3BCA;
+  }
+  50% {
+      background: #9174EA;
+  }
+  100% {
+      background: #5B3BCA;
+  }
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  animation: backgroundAnimation 5s infinite alternate; /* Thay đổi màu trong 5 giây */
+  font-family: "Rubik Wet Paint", system-ui;
+}
