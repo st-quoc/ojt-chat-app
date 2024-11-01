@@ -130,12 +130,6 @@
               >
                 light_mode
               </span>
-              <span
-                id="delete-chat-button"
-                class="icon material-symbols-rounded"
-              >
-                delete
-              </span>
             </div>
           </form>
         </div>
@@ -157,25 +151,7 @@
         }).then((e) => {
           if (e == 'confirm') {
             sessionStorage.removeItem('userID');
-            //reload page
-            window.location.reload();
-          }
-        });
-      });
-
-
-      // Delete All Sessions
-      document.querySelector('.deleteAll').addEventListener('click', () => {
-        cuteAlert({
-          type: 'question',
-          title: 'Delete All Sessions',
-          message: 'Are you sure you want to delete all sessions?',
-          confirmText: 'Yes',
-          cancelText: 'No',
-        }).then((e) => {
-          if (e == 'confirm') {
-            //reload page
-            localStorage.removeItem('saved-chats');
+            localStorage.removeItem('picked_sessionId');
             window.location.reload();
           }
         });

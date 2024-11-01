@@ -70,12 +70,11 @@
     const data = await response.json();
     console.log(data)
     if (data.message === 'User registered successfully') {
-      window.location.href = '/ojt-chat-app/index.html'; 
+      window.location.href = '/index.html'; 
     } else {
       alert(data.message); 
     }
   }
 
-  // document.getElementById('registrationForm').addEventListener('submit', register);
 </script>
 </html>

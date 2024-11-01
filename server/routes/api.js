@@ -50,25 +50,30 @@ router.get('/promts/:sessionId', async (req, res) => {
   }
 });
 
-// Xóa tất cả session của user
-router.delete('/sessions/:userId', async (req, res) => {
-  const { userId } = req.params;
-  try {
-    await Session.deleteMany({ userId });
-    res.status(200).json({ message: 'All sessions deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to delete sessions' });
-  }
-});
-
 // xóa session by id
-router.delete('/sessions/:sessionId', async (req, res) => {
-  const { sessionId } = req.params;
+router.delete('/delasessions', async (req, res) => {
+  const { sessionId } = req.body;
+  console.log(sessionId);
   try {
-    await Session.deleteOne({ sessionId });
+    await Session.deleteOne({ _id: sessionId });
     res.status(200).json({ message: 'Session deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete session' });
+  }
+});
+
+// Xóa tất cả session của user
+router.delete('/sessions', async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const sessionIds = await Session.find({ userId }).select('_id');
+    console.log(sessionIds);
+    await Session.deleteMany({ userId });
+    await Promt.deleteMany({ sessionId: { $in: sessionIds } });
+
+    res.status(200).json({ message: 'All sessions deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete sessions' });
   }
 });
 
