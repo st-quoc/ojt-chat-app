@@ -3,6 +3,7 @@
   width: 100vw;
   height: 100vh;
   position: relative;
+  padding: 0 20px;
 }
 .wrapper .bg-1 {
   width: 100%;
@@ -47,6 +48,7 @@
   overflow: hidden;
   display: flex;
   transition: all 0.25s ease;
+  margin: 0 20px;
 }
 .illustration {
   width: 50%;
@@ -70,10 +72,12 @@
     display: none;
   }
   .login-container,
-  .form{
-    width: 100%;
+  .form {
     max-width: 600px;
     margin: 0 auto;
+  }
+  .form {
+    width: 100%;
   }
 }
 .btn-login {

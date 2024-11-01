@@ -7,8 +7,6 @@ const hiddenTextarea = document.getElementById('hidden-textarea');
 const userID = sessionStorage.getItem('userID');
 if (!userID) {
   window.location.href = '/index.html';
-} else {
-  window.location.href = '/pages/chatPage.html';
 }
 let sessionData = [];
 let userMessage = null;
