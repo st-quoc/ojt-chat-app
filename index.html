@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Form</title>
     <link rel="stylesheet" href="./styles/reset.css" />
-    <link rel="stylesheet" href="./styles/base.css" />
+    <link rel="stylesheet" href="./styles/main.css" />
     <link rel="stylesheet" href="./styles/login.css" />
     <link
       class="main-stylesheet"
@@ -16,81 +16,72 @@
   </head>
   <body>
     <div class="wrapper">
-      <div class="container">
+      <div class="bg-1"></div>
+      <div class="bg-2"></div>
+      <div class="bg-3"></div>
+      <div class="login-container">
         <div class="illustration">
-          <img src="./assets/theme.png" alt="" />
+          <img src="./assets/login-bg.jpg" alt="" />
         </div>
         <div class="form">
-          <h1>Welcome To S Tier</h1>
+          <div class="title">
+            <h1>Welcome To</h1>
+            <div class="word">
+              <span>S</span>
+              <span>-</span>
+              <span>T</span>
+              <span>I</span>
+              <span>E</span>
+              <span>R</span>
+            </div>
+          </div>
           <form>
-            <label for="username">Email</label>
-            <input
-              type="text"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              required
-            />
+            <div class="field">
+              <input
+                type="text"
+                id="email"
+                name="email"
+                placeholder=" "
+                required
+              />
+              <label for="username">Email:</label>
+            </div>
 
-            <label for="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              required
-              pattern="^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"
-              title="Password must contain at least one uppercase letter, one special character (!@$%^&*), and be at least 8 characters long."
-            />
+            <div class="field">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder=" "
+                required
+                pattern="^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"
+                title="Password must contain at least one uppercase letter, one special character (!@$%^&*), and be at least 8 characters long."
+              />
+              <label for="password">Password:</label>
+            </div>
 
             <a href="#" class="forgot-password">Forgot password?</a>
-            <button type="submit" onclick="login(event)">Login</button>
-            <p>Have not account yet?</p>
-            <a href="./pages/register.html" class="create-account">Sign up</a>
+            <button class="btn-login" type="submit" onclick="login(event)">
+              <span>Login</span>
+            </button>
+            <div class="btn-signup">
+              <p>Have not account yet?</p>
+              <a href="./pages/register.html" class="create-account">Sign up</a>
+            </div>
           </form>
+          <!-- <div class="theme">
+            <p>Choose theme</p>
+            <div class="toggle-switch">
+              <label class="switch-label">
+                <input type="checkbox" class="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div> -->
         </div>
       </div>
     </div>
-
-    <script>
-      //if exist user id in session storage, redirect to chat page
-      // if (sessionStorage.getItem('userID')) {
-      //   window.location.href = '/pages/chatPage.html';
-      // }
-      async function login(event) {
-        event.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        try {
-          const response = await fetch(
-            'http://localhost:3000/api/users/login',
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                email,
-                password,
-              }),
-            }
-          );
-          const data = await response.json();
-          console.log('sss', data.data.userId);
-          sessionStorage.setItem('userID', data.data.userId);
-          window.location.href = '/pages/chatPage.html';
-        } catch (error) {
-          console.log('hello', data.userId);
-          displayErrorMessage('Network error or server is down');
-        }
-      }
-
-      function displayErrorMessage(message) {
-        const errorMessage = document.getElementById('error-message');
-        errorMessage.textContent = 'Login failed: ' + message;
-        errorMessage.style.display = 'block';
-      }
-    </script>
     <script src="https://www.cssscript.com/demo/alert-confirm-toast-cute/cute-alert.js"></script>
+    <script src="/js/index.js"></script>
   </body>
 </html>
