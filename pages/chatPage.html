@@ -31,6 +31,7 @@
     <div id="profile-menu" class="profile-menu">
       <ul>
         <li>View Profile</li>
+        <li class="deleteAll">Delete All Sessions</li>
         <li>Settings</li>
         <li class="logout">Logout</li>
       </ul>
@@ -155,7 +156,27 @@
           cancelText: 'No',
         }).then((e) => {
           if (e == 'confirm') {
-            window.location.href = '../index.html';
+            sessionStorage.removeItem('userID');
+            //reload page
+            window.location.reload();
+          }
+        });
+      });
+
+
+      // Delete All Sessions
+      document.querySelector('.deleteAll').addEventListener('click', () => {
+        cuteAlert({
+          type: 'question',
+          title: 'Delete All Sessions',
+          message: 'Are you sure you want to delete all sessions?',
+          confirmText: 'Yes',
+          cancelText: 'No',
+        }).then((e) => {
+          if (e == 'confirm') {
+            //reload page
+            localStorage.removeItem('saved-chats');
+            window.location.reload();
           }
         });
       });
