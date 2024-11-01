@@ -106,7 +106,6 @@ body {
 }
 
 body.hide-header .header {
-  margin: 0;
   display: none;
 }
 
@@ -498,52 +497,50 @@ body.hide-header .header {
   flex: 1;
   position: relative;
   height: 100%;
-  z-index: 1;
 }
 
 .profile-menu {
-  display: none; /* Ẩn menu profile mặc định */
-  position: absolute; /* Đặt vị trí tuyệt đối để menu không ảnh hưởng đến layout khác */
-  top: 60px; /* Vị trí menu dưới button profile */
-  right: 35px; /* Vị trí menu bên phải */
-  background-color: rgb(134, 134, 134); /* Màu nền của menu */
-  border: 1px solid #3f3f3f; /* Viền cho menu */
-  border-radius: 5px; /* Bo tròn các góc */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng */
-  z-index: 1000; /* Đảm bảo menu nằm trên các phần tử khác */
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 35px;
+  background-color: rgb(134, 134, 134);
+  border: 1px solid #3f3f3f;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
 .light_mode .profile-menu {
-  background-color: #f5f5f5; /* Màu nền xám nhạt */
-  border: #6b6b6b 1px solid; /* Viền cho menu */
+  background-color: #f5f5f5;
+  border: #6b6b6b 1px solid;
 }
 .light_mode .profile-menu li:hover {
-  background-color: #bdbbbb; /* Màu nền xám nhạt */
+  background-color: #bdbbbb;
 }
 
 .profile-menu ul {
-  list-style: none; /* Loại bỏ dấu đầu dòng */
-  margin: 10; /* Đặt margin về 0 */
-  padding: 0; /* Đặt padding về 0 để không có khoảng cách thừa */
+  list-style: none;
+  margin: 10;
+  padding: 0;
 }
 
 .profile-menu li {
   width: 100%;
-  padding: 8px 40px; /* Padding cho từng mục menu */
-  cursor: pointer; /* Thay đổi con trỏ khi hover */
+  padding: 8px 40px;
+  cursor: pointer;
 }
 
 .profile-menu li:hover {
-  background-color: #6b6b6b; /* Thay đổi màu nền khi hover */
+  background-color: #6b6b6b;
 }
 
-/* Session List */
 .session-list {
   margin-top: 60px;
   padding: 0px;
   color: #c2c2c2;
-  max-height: 600px; /* Adjust height based on your preference */
-  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 600px;
+  overflow-y: auto;
 }
 .session-list h3 {
   margin: 0;
@@ -599,7 +596,6 @@ body.hide-header .header {
   background-color: #444;
 }
 
-/* Responsive media query code for small screen */
 @media (max-width: 768px) {
   .header :is(.title, .subtitle) {
     font-size: 2rem;
