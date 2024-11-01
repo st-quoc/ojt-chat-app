@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registration Form</title>
-    <link rel="stylesheet" href="../styles/reset.css" />
-    <link rel="stylesheet" href="../styles/base.css" />
-  </head>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form</title>
+  <link rel="stylesheet" href="../styles/reset.css">
+  <link rel="stylesheet" href="../styles/base.css">
+</head>
 
   <body>
     <div class="wrapper">
@@ -30,7 +31,7 @@
               name="confirm-password"
               required
             />
-            <button type="submit">Sign Up</button>
+            <button type="submit" onclick="register(event)">Sign Up</button>
           </form>
           <p>
             Already have an account?
@@ -74,6 +75,7 @@
       alert(data.message); 
     }
   }
+
   // document.getElementById('registrationForm').addEventListener('submit', register);
 </script>
 </html>

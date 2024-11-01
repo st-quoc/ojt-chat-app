@@ -3,6 +3,8 @@ const chatContainer = document.querySelector('.chat-list');
 const suggestions = document.querySelectorAll('.suggestion');
 const toggleThemeButton = document.querySelector('#theme-toggle-button');
 const deleteChatButton = document.querySelector('#delete-chat-button');
+const messageInput = document.getElementById('prompt-textarea');
+const hiddenTextarea = document.getElementById('hidden-textarea');
 const userID = sessionStorage.getItem('userID');
 if (!userID) {
   window.location.href = '/index.html';
@@ -138,11 +140,9 @@ document.querySelector('.deleteAll').addEventListener('click', function () {
 });
 
 async function displayAllSession() {
-  const sessions = await getAllSessions();
-  console.log('Fetched sessions:', sessions);
-
-  const sessionUl = document.getElementById('session-ul');
-  sessionUl.innerHTML = '';
+  const sessions = await getAllSessions(); // Gọi hàm lấy tất cả session
+  const sessionUl = document.getElementById('session-ul'); // Lấy phần tử ul
+  sessionUl.innerHTML = ''; // Xóa nội dung hiện tại của ul
 
   if (sessions && sessions.length > 0) {
     sessions.forEach((session) => {
@@ -213,7 +213,7 @@ async function createSession(sessionData) {
     }
 
     const newSession = await response.json(); // Nhận dữ liệu của session mới
-    console.log('Session mới đã được tạo:', newSession);
+    // console.log('Session mới đã được tạo:', newSession);
     return newSession; // Trả về session mới tạo
   } catch (error) {
     console.error('Lỗi khi tạo session:', error);
@@ -234,7 +234,7 @@ addButton.addEventListener('click', () => {
 
   createSession(sessionData).then((newSession) => {
     if (newSession) {
-      console.log('Session mới được tạo:', newSession);
+      // console.log('Session mới được tạo:', newSession);
       localStorage.setItem('picked_sessionId', newSession._id);
       window.location.reload();
     } else {
@@ -264,7 +264,7 @@ async function getAllPromts(sessionId) {
     }
 
     const promts = await response.json();
-    console.log('Danh sách promts:', promts);
+    // console.log('Danh sách promts:', promts);
     return Array.isArray(promts) ? promts : []; // Đảm bảo trả về mảng
   } catch (error) {
     console.error('Lỗi khi lấy danh sách promts:', error);
@@ -307,7 +307,7 @@ async function createPromt(question, answer) {
     }
 
     const newPromt = await response.json(); // Nhận dữ liệu của promt mới
-    console.log('Promt mới được tạo:', newPromt);
+    // console.log('Promt mới được tạo:', newPromt);
     return newPromt; // Trả về promt mới
   } catch (error) {
     console.error('Lỗi khi tạo promt:', error);
@@ -412,28 +412,6 @@ const generateAPIResponse = async (incomingMessageDiv) => {
   const textElement = incomingMessageDiv.querySelector('.text'); // Lấy text element
 
   try {
-    console.log('check', sessionData);
-
-    // Kiểm tra nếu có phần tử chứa question và answer, và thêm chúng vào sessionData nếu chưa có
-    const hasQuestion = sessionData.some((item) => item.question);
-    const hasAnswer = sessionData.some((item) => item.answer);
-
-    if (hasQuestion) {
-      const questionItem = sessionData.find((item) => item.question);
-      sessionData.push({
-        role: 'model',
-        content: questionItem.question, // Thêm question với role là model
-      });
-    }
-
-    if (hasAnswer) {
-      const answerItem = sessionData.find((item) => item.answer);
-      sessionData.push({
-        role: 'user',
-        content: answerItem.answer, // Thêm answer với role là use
-      });
-    }
-
     // Lọc sessionData chỉ giữ lại các đối tượng với role và content
     const formattedSessionData = sessionData
       .filter((item) => item.role && item.content) // Giữ lại các item có role và content
@@ -464,16 +442,34 @@ const generateAPIResponse = async (incomingMessageDiv) => {
 
     // Lưu phản hồi với vai trò "model"
     sessionData.push({ role: 'model', content: apiResponse });
-    console.log('check', sessionData);
+    // console.log('check after', sessionData);
 
     renderResponse(apiResponse, textElement);
-
-    const lastUserQuestion = sessionData[sessionData.length - 2]; // Câu hỏi của người dùng mới nhất
-    const lastModelAnswer = sessionData[sessionData.length - 1]; // Câu trả lời của model mới nhất
-
-    if (lastUserQuestion.role === 'user' && lastModelAnswer.role === 'model') {
-      await createPromt(lastUserQuestion.content, lastModelAnswer.content); // Gọi hàm để lưu vào DB
+    const sessionContainsSessionId = sessionData.some((data) =>
+      data.hasOwnProperty('sessionId')
+    );
+    // console.log('check session', sessionContainsSessionId);
+    //if sessionData has length < 4
+    if (!sessionContainsSessionId) {
+      const lastUserQuestion = sessionData[sessionData.length - 2]; // Câu hỏi của người dùng mới nhất
+      const lastModelAnswer = sessionData[sessionData.length - 1]; // Câu trả lời của model mới nhất
+      if (
+        lastUserQuestion.role === 'user' &&
+        lastModelAnswer.role === 'model'
+      ) {
+        await createPromt(lastUserQuestion.content, lastModelAnswer.content); // Gọi hàm để lưu vào DB
+      }
+    } else {
+      const lastUserQuestion = sessionData[sessionData.length - 4]; // Câu hỏi của người dùng mới nhất
+      const lastModelAnswer = sessionData[sessionData.length - 3]; // Câu trả lời của model mới nhất
+      if (
+        lastUserQuestion.role === 'user' &&
+        lastModelAnswer.role === 'model'
+      ) {
+        await createPromt(lastUserQuestion.content, lastModelAnswer.content); // Gọi hàm để lưu vào DB
+      }
     }
+    loadSessions();
   } catch (error) {
     isResponseGenerating = false;
     textElement.innerText = error.message;
@@ -568,8 +564,7 @@ const copyMessage = (copyButton) => {
 
 // Cập nhật hàm để thêm câu hỏi hiện tại vào sessionData
 const handleOutgoingChat = () => {
-  userMessage =
-    typingForm.querySelector('.typing-input').value.trim() || userMessage;
+  userMessage = messageInput.innerText.trim() || userMessage;
   if (!userMessage || isResponseGenerating) return; // Exit if no message or response is generating
 
   isResponseGenerating = true;
@@ -586,7 +581,7 @@ const handleOutgoingChat = () => {
   outgoingMessageDiv.querySelector('.text').innerText = userMessage;
   chatContainer.appendChild(outgoingMessageDiv);
 
-  typingForm.reset(); // Clear the input field
+  // typingForm.reset(); // Clear the input field
   document.body.classList.add('hide-header');
   chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to the bottom
   setTimeout(showLoadingAnimation, 500); // Show loading animation for response
@@ -630,26 +625,76 @@ const loadSessions = async () => {
   if (sessions && sessions.length > 0) {
     sessions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    sessions.forEach(async (session) => {
+    for (const session of sessions) {
       const messages = await getAllPromts(session._id);
 
-      // Sử dụng question của prompt đầu tiên làm tên session (nếu có), và làm thuộc tính `title`
-      const sessionName =
-        messages && messages.length > 0
+      // Only proceed if there are messages in the session
+      if (messages && messages.length > 0) {
+        // Use the question of the first prompt as the session name (if available)
+        const sessionName = messages[0].question
           ? messages[0].question
           : `Chat session ${session._id}`;
 
-      const li = document.createElement('li');
-      li.innerText = sessionName; // Dùng question đầu tiên làm tên hiển thị của session
-      li.title = sessionName; // Dùng question đầu tiên làm title
+        const li = document.createElement('li');
+        li.classList.add('session-item');
 
-      li.addEventListener('click', async () => {
-        localStorage.setItem('picked_sessionId', session._id);
-        displaySessionChat(session._id, messages);
-      });
+        // Set the text of li first
+        const text = document.createElement('p');
+        text.innerText = sessionName;
+        text.title = sessionName;
+        li.appendChild(text);
 
-      sessionList.appendChild(li);
-    });
+        // Create the delete button
+        const deleteButton = document.createElement('div');
+        deleteButton.innerText = 'x';
+        deleteButton.title = 'Delete session';
+        deleteButton.classList.add('delete-session-button');
+        deleteButton.addEventListener('click', async (event) => {
+          if (confirm('Are you sure you want to delete this session?')) {
+            deleteSession(session._id);
+            loadSessions();
+          }
+        });
+
+        // Append the delete button after setting innerText
+        li.appendChild(deleteButton);
+
+        li.addEventListener('click', async () => {
+          localStorage.setItem('picked_sessionId', session._id);
+          displaySessionChat(session._id, messages);
+
+          // Check and add elements to sessionData if question and answer fields are present
+          const hasQuestion = sessionData.some((item) => item.question);
+          const hasAnswer = sessionData.some((item) => item.answer);
+
+          if (hasAnswer) {
+            const answerItems = sessionData.filter((item) => item.answer);
+            answerItems.forEach((answerItem) => {
+              sessionData.push({
+                role: 'model',
+                content: answerItem.answer,
+              });
+            });
+          }
+
+          if (hasQuestion) {
+            const questionItems = sessionData.filter((item) => item.question);
+            questionItems.forEach((questionItem) => {
+              sessionData.push({
+                role: 'user',
+                content: questionItem.question,
+              });
+            });
+          }
+
+          sessionData = sessionData.filter(
+            (item) => !item.question && !item.answer
+          );
+        });
+
+        sessionList.appendChild(li);
+      }
+    }
   } else {
     const li = document.createElement('li');
     li.innerText = 'Không có session nào.';
@@ -705,17 +750,22 @@ const displaySessionChat = (sessionID, messages) => {
         `
         <div class="message-content">
           <img class="avatar" src="../assets/img/pumpkin.svg" alt="Gemini avatar">
-          <p class="text">${message.answer}</p>
+          <p class="text"></p>
         </div>
       `,
         'incoming'
       ); // Class cho câu trả lời
+
+      // Append the answer element to the chat container first
       chatContainer.appendChild(answerElement);
+
+      // Call renderResponse to handle formatting for code blocks or inline code
+      const textElement = answerElement.querySelector('.text'); // Get the <p> element for text content
+      renderResponse(message.answer, textElement); // Render the formatted response
     }
 
     // Push existing messages into sessionData for continuation
     sessionData.push(message); // Add message to sessionData to continue conversation
-    console.log(sessionData);
   });
 };
 
@@ -730,6 +780,22 @@ suggestions.forEach((suggestion) => {
     userMessage = suggestion.querySelector('.text').innerText;
     handleOutgoingChat();
   });
+});
+
+messageInput.addEventListener('keydown', function (event) {
+  if (event.key === 'Enter') {
+    if (event.shiftKey) {
+      // Nếu Shift + Enter thì cho phép xuống dòng
+      document.execCommand('insertHTML', false, '<br><br>');
+      event.preventDefault(); // Ngăn chặn hành động mặc định của Enter
+    } else {
+      // Nếu chỉ nhấn Enter thì gửi tin nhắn
+      event.preventDefault(); // Ngăn chặn hành động mặc định của Enter
+      const message = messageInput.innerHTML; // Lấy nội dung
+      handleOutgoingChat(); // Thay bằng logic gửi tin nhắn
+      messageInput.innerHTML = ''; // Xóa nội dung sau khi gửi
+    }
+  }
 });
 
 // Prevent default form submission and handle outgoing chat
@@ -768,7 +834,7 @@ const checkLastestSession = async (userID) => {
 document
   .getElementById('menu-toggle-button')
   .addEventListener('click', function () {
-    loadSessions();
+    // loadSessions();
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
 
