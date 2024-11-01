@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Registration Form</title>
-    <link rel="stylesheet" href="../styles/reset.css" />
-    <link rel="stylesheet" href="../styles/base.css" />
-  </head>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form</title>
+  <link rel="stylesheet" href="../styles/reset.css">
+  <link rel="stylesheet" href="../styles/base.css">
+  <link
+  href="https://www.cssscript.com/demo/alert-confirm-toast-cute/style.css"
+  rel="stylesheet"
+  type="text/css"
+/>
+</head>
 
   <body>
     <div class="wrapper">
@@ -30,14 +36,67 @@
               name="confirm-password"
               required
             />
-            <button type="submit">Sign Up</button>
+            <button type="submit" onclick="register(event)">Sign Up</button>
           </form>
           <p>
             Already have an account?
-            <a href="#">Login here</a>
+            <a href="../index.html">Login here</a>
           </p>
         </div>
       </div>
     </div>
-  </body>
+  </div>
+</body>
+<script src="https://www.cssscript.com/demo/alert-confirm-toast-cute/cute-alert.js"></script>
+<script>
+  const register = async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    if (password !== confirmPassword) {
+      // Passwords not match
+      cuteToast({
+        type: 'error',
+        title: 'Error',
+        message: 'Passwords do not match'
+      })
+      return;
+    }
+
+    const response = await fetch('http://localhost:3000/api/users/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username,
+        email,
+        password
+      })
+    });
+
+    const data = await response.json();
+    console.log(data)
+    if (data.message === 'User registered successfully') {
+      cuteToast({
+        type: 'success',
+        title: 'Success',
+        message: 'User registered successfully'
+      })
+
+      // Redirect to login page timeout
+      setTimeout(() => {
+        window.location.href = '/ojt-chat-app/index.html';
+      }), 4000
+
+    } else {
+      alert(data.message); 
+    }
+  }
+
+  // document.getElementById('registrationForm').addEventListener('submit', register);
+</script>
 </html>
