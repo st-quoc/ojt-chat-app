@@ -32,7 +32,7 @@
     </div>
 
     <div class="wraper">
-      <div class="sidebar">
+      <div class="sidebar expanded">
         <div id="session-list" class="session-list">
           <h3>Sessions</h3>
           <div id="add-button" class="icon material-symbols-rounded">add</div>
@@ -80,20 +80,43 @@
 
         <div class="typing-area">
           <form action="#" class="typing-form">
-            <div class="input-wrapper">
-              <input
-                type="text"
-                placeholder="Enter a prompt here"
+            <div class="input-wrapper" style="position: relative">
+              <textarea
+                id="message-input"
+                placeholder="Message ChatGPT"
+                style="
+                  display: none;
+                  padding: 10px;
+                  width: 100%;
+                  border: 1px solid #ccc;
+                  border-radius: 4px;
+                  font-size: 14px;
+                  line-height: 1.5;
+                "
+              ></textarea>
+              <div
+                contenteditable="true"
+                translate="no"
                 class="typing-input"
-                required
-              />
-              <button
-                id="send-message-button"
-                class="icon material-symbols-rounded"
-              >
-                send
-              </button>
+                id="prompt-textarea"
+                style="
+                  border: 1px solid #ccc;
+                  padding: 10px;
+                  min-height: 56px;
+                  max-height: 100px;
+                  overflow-y: auto;
+                  font-size: 14px;
+                  line-height: 1.5;
+                  border-radius: 4px; /* Tạo bo góc cho div */
+                "
+              ></div>
             </div>
+            <button
+              id="send-message-button"
+              class="icon material-symbols-rounded"
+            >
+              send
+            </button>
             <div class="action-buttons">
               <span
                 id="theme-toggle-button"
@@ -109,10 +132,6 @@
               </span>
             </div>
           </form>
-          <p class="disclaimer-text">
-            Gemini may display inaccurate info, including about people, so
-            double-check its responses.
-          </p>
         </div>
       </div>
     </div>

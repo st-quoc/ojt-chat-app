@@ -48,6 +48,11 @@
     </div>
   </body>
   <script>
+    //if exist user id in session storage, redirect to chat page
+    // if (sessionStorage.getItem('userID')) {
+    //   window.location.href = '/pages/chatPage.html';
+    // }
+
     const login = async (e) => {
       e.preventDefault();
       const email = document.getElementById('username').value;
