@@ -43,31 +43,144 @@ async function getAllSessions() {
 
     const sessions = await response.json();
     return sessions; // Trả về danh sách session
+    console.log('sesion', sessions);
   } catch (error) {
     console.error('Lỗi khi lấy danh sách session:', error);
     return null; // Trả về null hoặc xử lý lỗi phù hợp
   }
 }
 
+async function deletePrompts(sessionId) {
+  try {
+    const response = await fetch(`/promts/${sessionId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data.message); // In ra thông báo thành công
+    } else {
+      const errorData = await response.json();
+      console.error('Error:', errorData.error); // In ra thông báo lỗi
+    }
+  } catch (error) {
+    console.error('Failed to delete prompts:', error);
+  }
+}
+
+async function deleteSession() {
+  // Lấy `sessionId` từ localStorage
+  const sessionId = localStorage.getItem('picked_sessionId');
+
+  if (!sessionId) {
+    console.error('Session ID not found in localStorage');
+    return;
+  }
+
+  try {
+    const response = await fetch(`/sessions/${sessionId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data.message); // In ra thông báo thành công
+    } else {
+      const errorData = await response.json();
+      console.error('Error:', errorData.error); // In ra thông báo lỗi
+    }
+  } catch (error) {
+    console.error('Failed to delete session:', error);
+  }
+}
+
+async function deleteSessions() {
+  // Giả sử bạn lấy `userId` từ session (có thể là từ cookie hoặc localStorage)
+  const userId = sessionStorage.getItem('userID'); // Hoặc dùng phương thức phù hợp để lấy userId từ session
+
+  if (!userId) {
+    console.error('User ID not found in session');
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `http://localhost:3000/api/sessions/${userId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data.message); // In ra thông báo thành công
+    } else {
+      const errorData = await response.json();
+      console.error('Error:', errorData.error); // In ra thông báo lỗi
+    }
+  } catch (error) {
+    console.error('Failed to delete sessions:', error);
+  }
+}
+
+// Chọn phần tử có class deleteAll
+document.querySelector('.deleteAll').addEventListener('click', function () {
+  deleteSessions(); // Gọi hàm deleteSessions khi click vào phần tử
+});
+
 async function displayAllSession() {
-  const sessions = await getAllSessions(); // Gọi hàm lấy tất cả session
-  console.log(sessions);
-  const sessionUl = document.getElementById('session-ul'); // Lấy phần tử ul
-  sessionUl.innerHTML = ''; // Xóa nội dung hiện tại của ul
+  const sessions = await getAllSessions();
+  console.log('Fetched sessions:', sessions);
+
+  const sessionUl = document.getElementById('session-ul');
+  sessionUl.innerHTML = '';
 
   if (sessions && sessions.length > 0) {
     sessions.forEach((session) => {
-      // Tạo phần tử li cho mỗi session
-      const li = document.createElement('li');
-      li.textContent = `Session ID: ${session.id}, Title: ${session.title}`; // Thay đổi để phù hợp với cấu trúc dữ liệu của bạn
-      sessionUl.appendChild(li); // Thêm li vào ul
+      console.log(`Adding session: ID=${session.id}, Title=${session.title}`);
+      addSessionItem(session.id, session.title);
     });
   } else {
-    // Nếu không có session nào
     const li = document.createElement('li');
+
     li.textContent = 'Không có session nào.';
     sessionUl.appendChild(li);
   }
+}
+
+function addSessionItem(sessionId, sessionTitle) {
+  const ul = document.getElementById('session-ul');
+  const li = document.createElement('li');
+  li.textContent = `Session ID: ${sessionId}, Title: ${sessionTitle}`;
+
+  const deleteButton = document.createElement('button');
+
+  deleteButton.textContent = 'Delete';
+  deleteButton.style.marginLeft = '10px';
+
+  console.log(deleteButton.textContent);
+
+  deleteButton.onclick = async function () {
+    try {
+      console.log(`Deleting session with ID: ${sessionId}`);
+      await deleteSession(sessionId);
+      ul.removeChild(li);
+    } catch (error) {
+      console.error('Failed to delete session:', error);
+    }
+  };
+
+  li.appendChild(deleteButton);
+  ul.appendChild(li);
 }
 
 async function createSession(sessionData) {
@@ -545,7 +658,14 @@ const loadSessions = async () => {
 };
 
 // Gọi hàm để tải session khi trang được tải
-document.addEventListener('DOMContentLoaded', loadSessions);
+document.addEventListener('DOMContentLoaded', function () {
+  // Xóa 'saved-chat' trong localStorage khi trang tải
+  localStorage.removeItem('saved-chat');
+
+  // Gọi hàm loadSessions để tải dữ liệu session
+  loadSessions();
+});
+localStorage.removeItem('saved-chat');
 
 const displaySessionChat = (sessionID, messages) => {
   // Set the current session ID

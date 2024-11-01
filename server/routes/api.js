@@ -50,4 +50,37 @@ router.get('/promts/:sessionId', async (req, res) => {
   }
 });
 
+// Xóa tất cả session của user
+router.delete('/sessions/:userId', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    await Session.deleteMany({ userId });
+    res.status(200).json({ message: 'All sessions deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete sessions' });
+  }
+});
+
+// xóa session by id
+router.delete('/sessions/:sessionId', async (req, res) => {
+  const { sessionId } = req.params;
+  try {
+    await Session.deleteOne({ sessionId });
+    res.status(200).json({ message: 'Session deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete session' });
+  }
+});
+
+// Xóa 1 session
+router.delete('/promts/:sessionId', async (req, res) => {
+  const { sessionId } = req.params;
+  try {
+    await Promt.deleteMany({ sessionId });
+    res.status(200).json({ message: 'All promts deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete promts' });
+  }
+});
+
 module.exports = router;

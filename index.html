@@ -46,7 +46,7 @@
             <a href="#" class="forgot-password">Forgot password?</a>
             <button type="submit" onclick="login(event)">Login</button>
             <p>Have not account yet?</p>
-            <a href="#" class="create-account">Sign up</a>
+            <a href="./pages/register.html" class="create-account">Sign up</a>
           </form>
         </div>
       </div>
@@ -72,31 +72,11 @@
             }
           );
           const data = await response.json();
-          if (response.ok && data.message === 'Success') {
-            // Notification when login success
-            cuteToast({
-              type: 'success',
-              title: 'Login Successfully',
-              message: data.message,
-              time: 2000,
-            });
-
-            sessionStorage.setItem('userID', data.data.user._id);
-
-            // delay 5s when login success
-            setTimeout(() => {
-              window.location.href = '/pages/chatPage.html';
-            }, 850);
-          } else {
-            // Alert the user that the login failed
-            cuteToast({
-              type: 'error',
-              title: 'Error',
-              message: data.message,
-              time: 3000,
-            });
-          }
+          console.log('sss', data.data.userId);
+          sessionStorage.setItem('userID', data.data.userId);
+          window.location.href = '/pages/chatPage.html';
         } catch (error) {
+          console.log('hello', data.userId);
           displayErrorMessage('Network error or server is down');
         }
       }
