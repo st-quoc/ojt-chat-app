@@ -1,10 +1,10 @@
-const AuthServices = require("../services/AuthService");
-const ApiResponse = require("../helpers/ApiResponse");
+const AuthServices = require('../services/AuthService');
+const ApiResponse = require('../helpers/ApiResponse');
 
 exports.registerUser = async (req, res) => {
   try {
     const result = await AuthServices.register(req.body);
-    ApiResponse.success(res, result, "User registered successfully");
+    ApiResponse.success(res, result, 'User registered successfully');
   } catch (error) {
     ApiResponse.error(res, error.message, 500);
   }
