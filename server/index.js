@@ -5,7 +5,6 @@ const { mongoConnect } = require("./config/db");
 const errorHandler = require("./middlewares/ErrorMiddleware");
 const UserRoutes = require("./routes/UserRoutes");
 const apiRoutes = require("./routes/api");
-const SessionRoutes = require("./routes/SessionRoutes");
 const path = require("path"); // Import path module
 
 dotenv.config();
