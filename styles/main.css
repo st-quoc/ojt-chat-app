@@ -2,6 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 .toggle-switch {
   position: relative;
@@ -17,10 +18,9 @@
   position: absolute;
   width: 100%;
   height: 35px;
-  background-color: var(--dark);
   border-radius: 25px;
   cursor: pointer;
-  border: 3px solid var(--dark);
+  border: 3px solid var(--background-body);
 }
 
 .checkbox {
@@ -38,20 +38,20 @@
 }
 
 .checkbox:checked ~ .slider {
-  background-color: var(--light);
+  background-color: var(--background-body);
 }
 
 .slider::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 2px;
   left: 2px;
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  -webkit-box-shadow: inset 12px -4px 0px 0px var(--light);
-  box-shadow: inset 12px -4px 0px 0px var(--light);
-  background-color: var(--dark);
+  -webkit-box-shadow: inset 12px -4px 0px 0px var(--background-body);
+  box-shadow: inset 12px -4px 0px 0px var(--background-body);
+  background-color: var(--background-body);
   -webkit-transition: 0.3s;
   transition: 0.3s;
 }
@@ -60,7 +60,7 @@
   -webkit-transform: translateX(34px);
   -ms-transform: translateX(34px);
   transform: translateX(34px);
-  background-color: var(--dark);
+  background-color: #000;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
