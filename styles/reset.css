@@ -1,10 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+[data-theme='light'] {
+  --background-body: #f7f8fa;
+  --scroll-bar: #1f2028;
+  --text-color: #272829;
+  --border-menu: #fff;
+  --side-bar-bg: #f9f9f9;
+  --chat-bg: #ffffff;
+  --chat-input: #f4f4f4;
+  --code-bg: #f9f9f9;
+  --overlay: #7f7f7fd2;
+}
+
+[data-theme='dark'] {
+  --background-body: #1f2028;
+  --scroll-bar: #f7f8fa;
+  --text-color: #ececec;
+  --border-menu: #242424;
+  --side-bar-bg: #171717;
+  --chat-bg: #212121;
+  --chat-input: #2f2f2f;
+  --code-bg: #0d0d0d;
+  --overlay: #000c;
+}
 html,
 body {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
+  overflow: auto;
   font-family: 'Poppins', sans-serif;
+  background-color: var(--background-body);
+}
+html[data-theme='dark'] svg {
+  stroke: #fff !important;
+}
+html[data-theme='light'] svg {
+  stroke: #ff758f !important;
 }
 
 * {
@@ -24,6 +55,9 @@ select,
 button {
   outline: none;
 }
+ul {
+  list-style: none;
+}
 
 input {
   line-height: normal;
@@ -41,4 +75,79 @@ a {
 img {
   display: block;
   max-width: 100%;
+}
+
+html[data-theme='dark'] pre,
+html[data-theme='dark'] code {
+  background-color: var(--code-bg);
+}
+html[data-theme='light'] pre,
+html[data-theme='light'] code {
+  background-color: var(--code-bg);
+}
+pre {
+  padding: 10px;
+  border-radius: 0 0 5px 5px;
+  overflow-x: auto;
+  margin: 0 !important;
+}
+code {
+  font-family: monospace;
+  color: var(--text-color) !important;
+  padding: 3px;
+  border-radius: 3px;
+  text-shadow: none !important;
+}
+pre > code {
+  font-family: monospace;
+  color: var(--text-color) !important;
+  text-shadow: none !important;
+}
+.btn {
+  cursor: pointer;
+}
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--code-bg);
+  padding: 5px 10px;
+  font-size: 14px;
+  color: var(--text-color);
+  text-transform: uppercase;
+}
+
+.language-name {
+  font-weight: bold;
+}
+
+.copy-button {
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  padding: 2px 6px;
+  font-size: 0.8em;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background-color 0.3s;
+}
+
+.copy-button:hover {
+  background-color: #0056b3;
 }

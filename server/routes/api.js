@@ -16,12 +16,25 @@ router.post('/sessions', async (req, res) => {
   }
 });
 
-// Lấy tất cả session của user
 router.get('/sessions/:userId', async (req, res) => {
   const { userId } = req.params;
   try {
     const sessions = await Session.find({ userId });
-    res.json(sessions);
+
+    const sessionsWithFirstMessage = await Promise.all(
+      sessions.map(async (session) => {
+        const firstMessage = await Promt.findOne({
+          sessionId: session._id,
+        }).sort({ createdAt: 1 });
+
+        return {
+          ...session.toObject(),
+          firstMessage: firstMessage ? firstMessage.question : null,
+        };
+      })
+    );
+
+    res.json(sessionsWithFirstMessage);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch sessions' });
   }

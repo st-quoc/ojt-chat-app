@@ -1,9 +1,7 @@
 const typingForm = document.querySelector('.typing-form');
 const chatContainer = document.querySelector('.chat-list');
 const suggestions = document.querySelectorAll('.suggestion');
-const toggleThemeButton = document.querySelector('#theme-toggle-button');
 const messageInput = document.getElementById('prompt-textarea');
-const hiddenTextarea = document.getElementById('hidden-textarea');
 const userID = sessionStorage.getItem('userID');
 if (!userID) {
   window.location.href = '/index.html';
@@ -14,6 +12,7 @@ let isResponseGenerating = false;
 const sessionId = localStorage.getItem('picked_sessionId');
 
 const API_KEY = 'AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM';
+// const BASE_URL = 'http://localhost:3000';
 const BASE_URL = 'https://arcane-sea-85415-cb9bc29a925f.herokuapp.com';
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
@@ -93,6 +92,7 @@ async function deleteSessionById(sessionId) {
 }
 
 document.querySelector('.deleteAll').addEventListener('click', () => {
+  modal.style.display = 'none';
   cuteAlert({
     type: 'question',
     title: 'Delete All Sessions',
@@ -121,6 +121,24 @@ document.querySelector('.deleteAll').addEventListener('click', () => {
       } catch (error) {
         console.error('Failed to delete all sessions:', error);
       }
+    }
+  });
+});
+
+const btnLogout = document.querySelector('.logout');
+btnLogout.addEventListener('click', () => {
+  modal.style.display = 'none';
+  cuteAlert({
+    type: 'question',
+    title: 'Logout',
+    message: 'Are you sure you want to logout?',
+    confirmText: 'Yes',
+    cancelText: 'No',
+  }).then((e) => {
+    if (e == 'confirm') {
+      sessionStorage.removeItem('userID');
+      localStorage.removeItem('picked_sessionId');
+      window.location.reload();
     }
   });
 });
@@ -161,8 +179,19 @@ async function createSession(sessionData) {
   }
 }
 
-const addButton = document.getElementById('add-button');
-addButton.addEventListener('click', async () => {
+// add new session chat
+const addButtonDesktop = document.getElementById('add-button');
+const addButtonMobile = document.getElementById('add-button-mobile');
+addButtonDesktop.addEventListener('click', async () => {
+  document.querySelectorAll('.session-item').forEach((item) => {
+    item.style.backgroundColor = 'transparent';
+  });
+  addNewSession();
+});
+addButtonMobile.addEventListener('click', async () => {
+  document.querySelectorAll('.session-item').forEach((item) => {
+    item.style.backgroundColor = 'transparent';
+  });
   addNewSession();
 });
 
@@ -253,16 +282,7 @@ async function createPromt(question, answer) {
   }
 }
 
-toggleThemeButton.addEventListener('click', () => {
-  const isLightMode = document.body.classList.toggle('light_mode');
-  toggleThemeButton.innerText = isLightMode ? 'dark_mode' : 'light_mode';
-  localStorage.setItem('themeColor', isLightMode ? 'light_mode' : 'dark_mode');
-});
-
 const loadDataFromLocalstorage = () => {
-  const isLightMode = localStorage.getItem('themeColor') === 'light_mode';
-  document.body.classList.toggle('light_mode', isLightMode);
-  toggleThemeButton.innerText = isLightMode ? 'dark_mode' : 'light_mode';
   chatContainer.scrollTo(0, chatContainer.scrollHeight);
 };
 
@@ -367,6 +387,7 @@ const generateAPIResponse = async (incomingMessageDiv) => {
 const renderResponse = (response, textElement) => {
   const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
   const inlineCodeRegex = /`([^`]+)`/g;
+  const linkRegex = /\[(.*?)\]\((https?:\/\/[^\s]+)\)/g;
   let lastIndex = 0;
 
   response.replace(codeBlockRegex, (match, language, code, offset) => {
@@ -376,7 +397,7 @@ const renderResponse = (response, textElement) => {
       );
       textElement.appendChild(textNode);
     }
-
+    const header = document.createElement('div');
     const pre = document.createElement('pre');
     const codeElement = document.createElement('code');
     codeElement.className = `language-${
@@ -384,6 +405,26 @@ const renderResponse = (response, textElement) => {
     }`;
     codeElement.textContent = code.trim();
 
+    header.classList.add('code-header');
+    const langName = document.createElement('span');
+    langName.textContent = language ? language.trim() : 'plaintext';
+    langName.classList.add('language-name');
+    header.appendChild(langName);
+
+    const copyButton = document.createElement('button');
+    copyButton.textContent = 'Copy';
+    copyButton.classList.add('copy-button');
+    copyButton.addEventListener('click', () => {
+      navigator.clipboard.writeText(code.trim()).then(() => {
+        copyButton.textContent = 'Copied!';
+        setTimeout(() => {
+          copyButton.textContent = 'Copy';
+        }, 2000);
+      });
+    });
+    header.appendChild(copyButton);
+
+    textElement.appendChild(header);
     pre.appendChild(codeElement);
     textElement.appendChild(pre);
 
@@ -391,16 +432,21 @@ const renderResponse = (response, textElement) => {
   });
 
   if (lastIndex < response.length) {
-    const textNode = document.createTextNode(response.slice(lastIndex));
-    textElement.appendChild(textNode);
+    const remainingText = response.slice(lastIndex);
+    let formattedText = remainingText;
+
+    formattedText = formattedText.replace(inlineCodeRegex, (match, code) => {
+      return `<code>${code.trim()}</code>`;
+    });
+
+    formattedText = formattedText.replace(linkRegex, (match, text, url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    });
+
+    const wrapper = document.createElement('span');
+    wrapper.innerHTML = formattedText;
+    textElement.appendChild(wrapper);
   }
-
-  let finalHTML = textElement.innerHTML;
-  finalHTML = finalHTML.replace(inlineCodeRegex, (match, code) => {
-    return `<code>${code.trim()}</code>`;
-  });
-
-  textElement.innerHTML = finalHTML;
 
   Prism.highlightAllUnder(textElement);
 
@@ -443,15 +489,15 @@ const handleOutgoingChat = () => {
   sessionData.push({ role: 'user', content: userMessage });
 
   const html = `<div class="message-content">
-                  <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
                   <p class="text"></p>
+                  <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
                 </div>`;
 
   const outgoingMessageDiv = createMessageElement(html, 'outgoing');
   outgoingMessageDiv.querySelector('.text').innerText = userMessage;
   chatContainer.appendChild(outgoingMessageDiv);
 
-  document.querySelector('header').style.display = 'none';
+  document.querySelector('.introduce').style.display = 'none';
   chatContainer.scrollTo(0, chatContainer.scrollHeight);
   setTimeout(showLoadingAnimation, 500);
 
@@ -471,7 +517,7 @@ const updateSessionInLocalStorage = (sessionData) => {
   sessionData = formattedSessionData;
 };
 
-const sessionList = document.getElementById('session-ul');
+const sessionList = document.getElementById('session-list');
 
 const loadSessions = async () => {
   sessionList.innerHTML = '';
@@ -482,19 +528,22 @@ const loadSessions = async () => {
     sessions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     for (const session of sessions) {
-      const messages = await getAllPromts(session._id);
-
-      if (messages && messages.length > 0) {
-        const sessionName = messages[0].question
-          ? messages[0].question
-          : `Chat session ${session._id}`;
-
+      if (session.firstMessage) {
         const li = document.createElement('li');
         li.classList.add('session-item');
 
         const text = document.createElement('p');
-        text.innerText = sessionName;
-        text.title = sessionName;
+        text.innerText = session.firstMessage;
+        text.title = session.firstMessage;
+        const picked = localStorage.getItem('picked_sessionId');
+        if (picked === session._id) {
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark') {
+            li.style.backgroundColor = '#212121';
+          } else {
+            li.style.backgroundColor = '#ececec';
+          }
+        }
         li.appendChild(text);
 
         const deleteButton = document.createElement('div');
@@ -512,6 +561,16 @@ const loadSessions = async () => {
 
         li.addEventListener('click', async () => {
           localStorage.setItem('picked_sessionId', session._id);
+          document.querySelectorAll('.session-item').forEach((item) => {
+            item.style.backgroundColor = 'transparent';
+          });
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark') {
+            li.style.backgroundColor = '#212121';
+          } else {
+            li.style.backgroundColor = '#ececec';
+          }
+          const messages = await getAllPromts(session._id);
           displaySessionChat(session._id, messages);
 
           const hasQuestion = sessionData.some((item) => item.question);
@@ -565,7 +624,7 @@ const displaySessionChat = (sessionID, messages) => {
   localStorage.setItem('picked_sessionId', sessionID);
 
   chatContainer.innerHTML = '';
-  const header = document.querySelector('.header');
+  const header = document.querySelector('.introduce');
   if (header) {
     header.style.display = 'none';
   }
@@ -580,8 +639,8 @@ const displaySessionChat = (sessionID, messages) => {
       const questionElement = createMessageElement(
         `
         <div class="message-content">
-          <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
           <p class="text">${message.question}</p>
+          <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
         </div>
       `,
         'outgoing'
@@ -640,25 +699,6 @@ typingForm.addEventListener('submit', (e) => {
 
 loadDataFromLocalstorage();
 
-document
-  .getElementById('menu-toggle-button')
-  .addEventListener('click', function () {
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
-
-    sidebar.classList.toggle('expanded');
-  });
-
-document
-  .getElementById('profile-toggle-button')
-  .addEventListener('click', function () {
-    const profileMenu = document.getElementById('profile-menu');
-    profileMenu.style.display =
-      profileMenu.style.display === 'none' || profileMenu.style.display === ''
-        ? 'block'
-        : 'none';
-  });
-
 const loadCurrentSession = async () => {
   if (sessionId) {
     const messages = await getAllPromts(sessionId);
@@ -668,3 +708,62 @@ const loadCurrentSession = async () => {
 };
 
 loadCurrentSession();
+
+var modal = document.getElementById('modal-user');
+var btnUser = document.getElementById('profile-toggle-btn-header');
+var span = document.getElementsByClassName('close')[0];
+btnUser.addEventListener('click', function (event) {
+  modal.style.display = 'flex';
+});
+span.addEventListener('click', function (event) {
+  modal.style.display = 'none';
+});
+window.addEventListener('click', function (event) {
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+});
+
+const btnHideSidebar = document.getElementById('menu-toggle-button-sidebar');
+btnHideSidebar.addEventListener('click', () => {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.add('collapse');
+});
+
+const btnHeaderVisibaleSidebar = document.getElementById(
+  'menu-toggle-button-header'
+);
+btnHeaderVisibaleSidebar.addEventListener('click', () => {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('collapse');
+});
+
+window.addEventListener('load', () => {
+  if (window.innerWidth < 767) {
+    sidebar.classList.add('collapse');
+  }
+  const dataTheme = localStorage.getItem(theme);
+  if (dataTheme) {
+    document.documentElement.setAttribute('data-theme', theme);
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', light);
+  }
+});
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+
+  document.getElementById('themeToggle').checked = theme === 'dark';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
+});
+
+document.getElementById('themeToggle').addEventListener('change', function () {
+  const theme = this.checked ? 'dark' : 'light';
+  setTheme(theme);
+});

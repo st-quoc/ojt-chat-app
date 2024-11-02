@@ -1,53 +1,3 @@
-/* Import Google Font - Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-
-pre {
-  background-color: #f4f4f4;
-  padding: 10px;
-  border-radius: 5px;
-  overflow-x: auto;
-}
-code {
-  font-family: monospace;
-  background-color: #f5f2f0;
-  color: #333;
-  padding: 3px;
-  border-radius: 3px;
-}
-pre > code {
-  background-color: unset;
-  font-family: monospace;
-  color: #333;
-}
-
-/* width */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
-
 :root {
   /* Dark mode colors */
   --text-color: #b9b7b7;
@@ -564,7 +514,7 @@ body.hide-header .header {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 120px; /* Tùy chỉnh lại kích thước cho phù hợp */
+  max-width: 120px;
   display: none;
 }
 
