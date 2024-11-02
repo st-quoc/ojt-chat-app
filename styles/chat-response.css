@@ -1,0 +1,33 @@
+@media screen and (max-width: 767px) {
+  .chat-container {
+    width: 100%;
+  }
+  .btn-user-header {
+    display: none;
+  }
+  #add-button-mobile {
+    display: block;
+    border-radius: 6px;
+    background-color: #ff758f;
+    border: none;
+    color: #ffffff;
+    text-align: center;
+    font-size: 13px;
+    padding: 5px 10px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 110px;
+  }
+  #add-button-mobile svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .chat-container header .btn-menu-mobile {
+    display: block;
+  }
+}
