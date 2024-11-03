@@ -5,26 +5,33 @@ if (sessionStorage.getItem('userID')) {
 }
 async function login(event) {
   event.preventDefault();
+
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
+
   try {
     const response = await fetch(`${BASE_URL}/api/users/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
+      body: JSON.stringify({ email, password }),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Login failed');
+    }
+
     const data = await response.json();
-    console.log('sss', data.data.userId);
     sessionStorage.setItem('userID', data.data.userId);
     window.location.href = '/pages/chatPage.html';
   } catch (error) {
-    console.log('hello', data.userId);
-    displayErrorMessage('Network error or server is down');
+    cuteToast({
+      type: 'error',
+      title: 'Error',
+      message: error.message || 'Information is not correct!',
+    });
   }
 }
 

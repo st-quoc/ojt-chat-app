@@ -16,9 +16,6 @@ const API_KEY = 'AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM';
 const BASE_URL = 'https://arcane-sea-85415-cb9bc29a925f.herokuapp.com';
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
-
-
-
 async function getAllSessions() {
   const userId = sessionStorage.getItem('userID');
 
@@ -94,39 +91,37 @@ async function deleteSessionById(sessionId) {
   }
 }
 
-document.querySelector('.deleteAll').addEventListener('click', () => {
-  modal.style.display = 'none';
-  cuteAlert({
-    type: 'question',
-    title: 'Delete All Sessions',
-    message: 'Are you sure you want to delete all sessions?',
-    confirmText: 'Yes',
-    cancelText: 'No',
-  }).then(async (e) => {
-    if (e == 'confirm') {
-      try {
-        const response = await fetch(`${BASE_URL}/api/sessions`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId: sessionStorage.getItem('userID') }),
-        });
-        console.log('response', response);
+async function deleteSessions() {
+  const userId = sessionStorage.getItem('userID');
 
-        if (response.ok) {
-          localStorage.removeItem('picked_sessionId');
-          await addNewSession();
-          await loadSessions();
-        } else {
-          console.error('Error:', response);
-        }
-      } catch (error) {
-        console.error('Failed to delete all sessions:', error);
-      }
+  if (!userId) {
+    console.error('User ID not found in session');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/api/sessions/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      localStorage.removeItem('picked_sessionId');
+      await Promise.all([addNewSession(), loadSessions()]);
+      cuteToast({
+        type: 'success',
+        title: 'Success',
+        message: 'Sessions deleted successfully!',
+      });
+    } else {
+      console.error('Error:', response.statusText);
     }
-  });
-});
+  } catch (error) {
+    console.error('Failed to delete all sessions:', error);
+  }
+}
 
 const btnLogout = document.querySelector('.logout');
 btnLogout.addEventListener('click', () => {
@@ -700,13 +695,14 @@ typingForm.addEventListener('submit', (e) => {
   handleOutgoingChat();
 });
 
-document.getElementById("send-message-button").addEventListener("click", function(event) {
-  event.preventDefault(); 
-  handleOutgoingChat();
-  document.getElementById("message-input").value = ""; 
-  document.getElementById("prompt-textarea").innerHTML = "";
-});
-
+document
+  .getElementById('send-message-button')
+  .addEventListener('click', function (event) {
+    event.preventDefault();
+    handleOutgoingChat();
+    document.getElementById('message-input').value = '';
+    document.getElementById('prompt-textarea').innerHTML = '';
+  });
 
 loadDataFromLocalstorage();
 
