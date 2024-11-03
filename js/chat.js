@@ -1,26 +1,25 @@
 const typingForm = document.querySelector('.typing-form');
 const chatContainer = document.querySelector('.chat-list');
 const suggestions = document.querySelectorAll('.suggestion');
-const toggleThemeButton = document.querySelector('#theme-toggle-button');
-const deleteChatButton = document.querySelector('#delete-chat-button');
 const messageInput = document.getElementById('prompt-textarea');
-const hiddenTextarea = document.getElementById('hidden-textarea');
 const userID = sessionStorage.getItem('userID');
 if (!userID) {
   window.location.href = '/index.html';
 }
 let sessionData = [];
-
 let userMessage = null;
 let isResponseGenerating = false;
+const sessionId = localStorage.getItem('picked_sessionId');
 
-// API configuration
-const API_KEY = 'AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM'; // Your API key here
-
+const API_KEY = 'AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM';
+// const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'https://arcane-sea-85415-cb9bc29a925f.herokuapp.com';
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
+
+
+
 async function getAllSessions() {
-  // Lấy userId từ session storage
   const userId = sessionStorage.getItem('userID');
 
   if (!userId) {
@@ -28,7 +27,7 @@ async function getAllSessions() {
     return null;
   }
 
-  const url = `http://localhost:3000/api/sessions/${userId}`;
+  const url = `${BASE_URL}/api/sessions/${userId}`;
 
   try {
     const response = await fetch(url, {
@@ -38,17 +37,15 @@ async function getAllSessions() {
       },
     });
 
-    // Kiểm tra xem phản hồi có thành công hay không
     if (!response.ok) {
       throw new Error(`Error: ${response.statusText}`);
     }
 
     const sessions = await response.json();
-    return sessions; // Trả về danh sách session
-    console.log('sesion', sessions);
+    return sessions;
   } catch (error) {
     console.error('Lỗi khi lấy danh sách session:', error);
-    return null; // Trả về null hoặc xử lý lỗi phù hợp
+    return null;
   }
 }
 
@@ -63,39 +60,34 @@ async function deletePrompts(sessionId) {
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data.message); // In ra thông báo thành công
+      console.log(data.message);
     } else {
       const errorData = await response.json();
-      console.error('Error:', errorData.error); // In ra thông báo lỗi
+      console.error('Error:', errorData.error);
     }
   } catch (error) {
     console.error('Failed to delete prompts:', error);
   }
 }
 
-async function deleteSession() {
-  // Lấy `sessionId` từ localStorage
-  const sessionId = localStorage.getItem('picked_sessionId');
-
-  if (!sessionId) {
-    console.error('Session ID not found in localStorage');
-    return;
-  }
-
+async function deleteSessionById(sessionId) {
   try {
-    const response = await fetch(`/sessions/${sessionId}`, {
+    const response = await fetch(`${BASE_URL}/api/delasessions/`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({ sessionId }),
     });
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data.message); // In ra thông báo thành công
+      console.log(data.message);
+      await addNewSession();
+      loadSessions();
     } else {
       const errorData = await response.json();
-      console.error('Error:', errorData.error); // In ra thông báo lỗi
+      console.error('Error:', errorData.error);
     }
   } catch (error) {
     console.error('Failed to delete session:', error);
@@ -128,80 +120,51 @@ async function deleteSessions() {
       message: 'Sessions deleted successfully!',
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data.message); // In ra thông báo thành công
-    } else {
-      const errorData = await response.json();
-      console.error('Error:', errorData.error); // In ra thông báo lỗi
+        if (response.ok) {
+          localStorage.removeItem('picked_sessionId');
+          await addNewSession();
+          await loadSessions();
+        } else {
+          console.error('Error:', response);
+        }
+      } catch (error) {
+        console.error('Failed to delete all sessions:', error);
+      }
     }
-  } catch (error) {
-    console.error('Failed to delete sessions:', error);
-  }
-}
-
-// Chọn phần tử có class deleteAll
-document.querySelector('.deleteAll').addEventListener('click', function () {
-  deleteSessions(); // Gọi hàm deleteSessions khi click vào phần tử
+  });
 });
 
-async function displayAllSession() {
-  const sessions = await getAllSessions(); // Gọi hàm lấy tất cả session
-  const sessionUl = document.getElementById('session-ul'); // Lấy phần tử ul
-  sessionUl.innerHTML = ''; // Xóa nội dung hiện tại của ul
-
-  if (sessions && sessions.length > 0) {
-    sessions.forEach((session) => {
-      console.log(`Adding session: ID=${session.id}, Title=${session.title}`);
-      addSessionItem(session.id, session.title);
-    });
-  } else {
-    const li = document.createElement('li');
-
-    li.textContent = 'Không có session nào.';
-    sessionUl.appendChild(li);
-  }
-}
-
-function addSessionItem(sessionId, sessionTitle) {
-  const ul = document.getElementById('session-ul');
-  const li = document.createElement('li');
-  li.textContent = `Session ID: ${sessionId}, Title: ${sessionTitle}`;
-
-  const deleteButton = document.createElement('button');
-
-  deleteButton.textContent = 'Delete';
-  deleteButton.style.marginLeft = '10px';
-
-  console.log(deleteButton.textContent);
-
-  deleteButton.onclick = async function () {
-    try {
-      console.log(`Deleting session with ID: ${sessionId}`);
-      await deleteSession(sessionId);
-      ul.removeChild(li);
-    } catch (error) {
-      console.error('Failed to delete session:', error);
+const btnLogout = document.querySelector('.logout');
+btnLogout.addEventListener('click', () => {
+  modal.style.display = 'none';
+  cuteAlert({
+    type: 'question',
+    title: 'Logout',
+    message: 'Are you sure you want to logout?',
+    confirmText: 'Yes',
+    cancelText: 'No',
+  }).then((e) => {
+    if (e == 'confirm') {
+      sessionStorage.removeItem('userID');
+      localStorage.removeItem('picked_sessionId');
+      window.location.reload();
     }
-  };
-
-  li.appendChild(deleteButton);
-  ul.appendChild(li);
-}
+  });
+});
 
 async function createSession(sessionData) {
   const userId = sessionStorage.getItem('userID');
 
   if (!userId) {
     console.error('User ID không tồn tại trong session storage.');
-    return null; // Hoặc xử lý phù hợp nếu không có userId
+    return null;
   }
 
-  const url = 'http://localhost:3000/api/sessions'; // URL của endpoint tạo session
+  const url = `${BASE_URL}/api/sessions`;
 
   const bodyData = {
-    userId: userId, // Sử dụng userId từ session storage
-    sessionData: sessionData, // Dữ liệu session (tên, trạng thái, v.v.)
+    userId: userId,
+    sessionData: sessionData,
   };
 
   try {
@@ -210,52 +173,65 @@ async function createSession(sessionData) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(bodyData), // Chuyển đổi body thành JSON
+      body: JSON.stringify(bodyData),
     });
 
-    // Kiểm tra xem phản hồi có thành công hay không
     if (!response.ok) {
       throw new Error(`Error: ${response.statusText}`);
     }
 
-    const newSession = await response.json(); // Nhận dữ liệu của session mới
-    // console.log('Session mới đã được tạo:', newSession);
-    return newSession; // Trả về session mới tạo
+    const newSession = await response.json();
+    return newSession;
   } catch (error) {
     console.error('Lỗi khi tạo session:', error);
-    return null; // Trả về null hoặc xử lý lỗi phù hợp
+    return null;
   }
 }
 
-const addButton = document.getElementById('add-button');
-addButton.addEventListener('click', () => {
+// add new session chat
+const addButtonDesktop = document.getElementById('add-button');
+const addButtonMobile = document.getElementById('add-button-mobile');
+addButtonDesktop.addEventListener('click', async () => {
+  document.querySelectorAll('.session-item').forEach((item) => {
+    item.style.backgroundColor = 'transparent';
+  });
+  addNewSession();
+});
+addButtonMobile.addEventListener('click', async () => {
+  document.querySelectorAll('.session-item').forEach((item) => {
+    item.style.backgroundColor = 'transparent';
+  });
+  addNewSession();
+});
+
+const addNewSession = async () => {
   localStorage.removeItem('picked_sessionId');
-  //reload page
-  localStorage.removeItem('saved-chats');
-  // Lấy dữ liệu từ các trường nhập liệu
   const sessionData = {
     name: 'Session mới',
     status: 'Active',
   };
 
-  createSession(sessionData).then((newSession) => {
+  await createSession(sessionData).then((newSession) => {
+    console.log('newSession', newSession);
     if (newSession) {
-      // console.log('Session mới được tạo:', newSession);
       localStorage.setItem('picked_sessionId', newSession._id);
-      window.location.reload();
-    } else {
     }
   });
-});
 
-//get all promt by session id
+  const sessionId = localStorage.getItem('picked_sessionId');
+
+  await getAllPromts(sessionId).then((promts) => {
+    displaySessionChat(sessionId, promts);
+  });
+};
+
 async function getAllPromts(sessionId) {
   if (!sessionId) {
     console.error('Session ID không được cung cấp.');
     return null;
   }
 
-  const url = `http://localhost:3000/api/promts/${sessionId}`;
+  const url = `${BASE_URL}/api/promts/${sessionId}`;
 
   try {
     const response = await fetch(url, {
@@ -270,8 +246,7 @@ async function getAllPromts(sessionId) {
     }
 
     const promts = await response.json();
-    // console.log('Danh sách promts:', promts);
-    return Array.isArray(promts) ? promts : []; // Đảm bảo trả về mảng
+    return Array.isArray(promts) ? promts : [];
   } catch (error) {
     console.error('Lỗi khi lấy danh sách promts:', error);
     return null;
@@ -279,17 +254,14 @@ async function getAllPromts(sessionId) {
 }
 
 async function createPromt(question, answer) {
-  // Lấy sessionId và userId từ local storage
-  const sessionId = localStorage.getItem('picked_sessionId');
   const userId = sessionStorage.getItem('userID');
-
-  // Kiểm tra xem sessionId và userId có tồn tại không
+  const sessionId = localStorage.getItem('picked_sessionId');
   if (!sessionId || !userId) {
     console.error('Session ID hoặc User ID không tồn tại trong local storage.');
-    return null; // Hoặc xử lý phù hợp nếu không có sessionId hoặc userId
+    return null;
   }
 
-  const url = 'http://localhost:3000/api/promts'; // URL của endpoint
+  const url = `${BASE_URL}/api/promts`;
 
   const promtData = {
     sessionId,
@@ -304,80 +276,25 @@ async function createPromt(question, answer) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(promtData), // Chuyển đổi dữ liệu thành JSON
+      body: JSON.stringify(promtData),
     });
 
-    // Kiểm tra xem phản hồi có thành công hay không
     if (!response.ok) {
       throw new Error(`Error: ${response.statusText}`);
     }
 
-    const newPromt = await response.json(); // Nhận dữ liệu của promt mới
-    // console.log('Promt mới được tạo:', newPromt);
-    return newPromt; // Trả về promt mới
+    const newPromt = await response.json();
+    return newPromt;
   } catch (error) {
     console.error('Lỗi khi tạo promt:', error);
-    return null; // Trả về null hoặc xử lý lỗi phù hợp
+    return null;
   }
 }
 
-// render chat container
-// const renderChatContainer = (data) => {
-//   data.forEach((message) => {
-//     const html = `<div class="message-content">
-//                     <img class="avatar" src="../assets/img/pumpkin.svg" alt="Gemini avatar">
-//                     <p class="text"></p>
-//                   </div>
-//                   <span onClick="copyMessage(this)" class="icon material-symbols-rounded">content_copy</span>`;
-//     const incomingMessageDiv = createMessageElement(html, 'incoming');
-//     incomingMessageDiv.querySelector('.text').innerText = message.promtText;
-//     chatContainer.appendChild(incomingMessageDiv);
-//   });
-// };
-
-// save chat to db
-// const saveChat = async (data) => {
-//   try {
-//     const response = await fetch('http://localhost:3000/api/message/create', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({ data }),
-//       // getAllPromtBySessionId(data.sessionID);
-//     });
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
-
-// State variables
-
-// Event listener for the theme toggle button
-toggleThemeButton.addEventListener('click', () => {
-  const isLightMode = document.body.classList.toggle('light_mode');
-  toggleThemeButton.innerText = isLightMode ? 'dark_mode' : 'light_mode';
-  // Save the current theme to local storage
-  localStorage.setItem('themeColor', isLightMode ? 'light_mode' : 'dark_mode');
-});
-
-// Load theme and chat data from local storage on page load
 const loadDataFromLocalstorage = () => {
-  const savedChats = localStorage.getItem('saved-chats');
-  const isLightMode = localStorage.getItem('themeColor') === 'light_mode';
-
-  // Apply the stored theme
-  document.body.classList.toggle('light_mode', isLightMode);
-  toggleThemeButton.innerText = isLightMode ? 'dark_mode' : 'light_mode';
-
-  // Restore saved chats or clear the chat container
-  chatContainer.innerHTML = savedChats || '';
-  document.body.classList.toggle('hide-header', savedChats);
-
-  chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to the bottom
+  chatContainer.scrollTo(0, chatContainer.scrollHeight);
 };
 
-// Create a new message element and return it
 const createMessageElement = (content, ...classes) => {
   const div = document.createElement('div');
   div.classList.add('message', ...classes);
@@ -385,18 +302,15 @@ const createMessageElement = (content, ...classes) => {
   return div;
 };
 
-// Show typing effect by displaying words one by one
 const showTypingEffect = (text, textElement, incomingMessageDiv) => {
   const words = text.split(' ');
   let currentWordIndex = 0;
 
   const typingInterval = setInterval(() => {
-    // Append each word to the text element with a space
     textElement.innerText +=
       (currentWordIndex === 0 ? '' : ' ') + words[currentWordIndex++];
     incomingMessageDiv.querySelector('.icon').classList.add('hide');
 
-    // If all words are displayed
     if (currentWordIndex === words.length) {
       clearInterval(typingInterval);
       isResponseGenerating = false;
@@ -407,23 +321,21 @@ const showTypingEffect = (text, textElement, incomingMessageDiv) => {
         promtText: userMessage,
         promtRepsonse: text,
         timestamp: new Date().getTime(),
-      }); // Create message in the API
-      localStorage.setItem('saved-chats', chatContainer.innerHTML); // Save chats to local storage
+      });
     }
-    chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to the bottom
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
   }, 75);
 };
 
 const generateAPIResponse = async (incomingMessageDiv) => {
-  const textElement = incomingMessageDiv.querySelector('.text'); // Lấy text element
+  const textElement = incomingMessageDiv.querySelector('.text');
 
   try {
-    // Lọc sessionData chỉ giữ lại các đối tượng với role và content
     const formattedSessionData = sessionData
-      .filter((item) => item.role && item.content) // Giữ lại các item có role và content
+      .filter((item) => item.role && item.content)
       .map(({ role, content }) => ({
         role,
-        content, // Đổi key từ parts[0].text sang content
+        content,
       }));
 
     const response = await fetch(API_URL, {
@@ -432,7 +344,7 @@ const generateAPIResponse = async (incomingMessageDiv) => {
       body: JSON.stringify({
         contents: formattedSessionData.map(({ role, content }) => ({
           role,
-          parts: [{ text: content }], // Định dạng lại để gửi
+          parts: [{ text: content }],
         })),
       }),
     });
@@ -440,41 +352,37 @@ const generateAPIResponse = async (incomingMessageDiv) => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error.message);
 
-    // Lấy phản hồi từ API và lưu vào sessionData
     const apiResponse = data?.candidates[0].content.parts[0].text.replace(
       /\*\*(.*?)\*\*/g,
       '$1'
     );
 
-    // Lưu phản hồi với vai trò "model"
     sessionData.push({ role: 'model', content: apiResponse });
-    // console.log('check after', sessionData);
-
     renderResponse(apiResponse, textElement);
+
     const sessionContainsSessionId = sessionData.some((data) =>
       data.hasOwnProperty('sessionId')
     );
-    // console.log('check session', sessionContainsSessionId);
-    //if sessionData has length < 4
-    if (!sessionContainsSessionId) {
-      const lastUserQuestion = sessionData[sessionData.length - 2]; // Câu hỏi của người dùng mới nhất
-      const lastModelAnswer = sessionData[sessionData.length - 1]; // Câu trả lời của model mới nhất
-      if (
-        lastUserQuestion.role === 'user' &&
-        lastModelAnswer.role === 'model'
-      ) {
-        await createPromt(lastUserQuestion.content, lastModelAnswer.content); // Gọi hàm để lưu vào DB
-      }
-    } else {
-      const lastUserQuestion = sessionData[sessionData.length - 4]; // Câu hỏi của người dùng mới nhất
-      const lastModelAnswer = sessionData[sessionData.length - 3]; // Câu trả lời của model mới nhất
-      if (
-        lastUserQuestion.role === 'user' &&
-        lastModelAnswer.role === 'model'
-      ) {
-        await createPromt(lastUserQuestion.content, lastModelAnswer.content); // Gọi hàm để lưu vào DB
+
+    let pickedSession = localStorage.getItem('picked_sessionId');
+    if (!pickedSession) {
+      const newSession = await createSession(sessionData);
+      if (newSession) {
+        localStorage.setItem('picked_sessionId', newSession._id);
+        pickedSession = newSession;
       }
     }
+
+    const lastUserQuestion =
+      sessionData[sessionData.length - (sessionContainsSessionId ? 4 : 2)];
+    const lastModelAnswer =
+      sessionData[sessionData.length - (sessionContainsSessionId ? 3 : 1)];
+
+    if (lastUserQuestion.role === 'user' && lastModelAnswer.role === 'model') {
+      console.log('lastUserQuestion', lastUserQuestion);
+      await createPromt(lastUserQuestion.content, lastModelAnswer.content);
+    }
+
     loadSessions();
   } catch (error) {
     isResponseGenerating = false;
@@ -486,22 +394,19 @@ const generateAPIResponse = async (incomingMessageDiv) => {
 };
 
 const renderResponse = (response, textElement) => {
-  // Sử dụng regex để tách code block (nếu có)
-  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g; // Lấy ngôn ngữ và mã code
-  const inlineCodeRegex = /`([^`]+)`/g; // Lấy inline code
+  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+  const inlineCodeRegex = /`([^`]+)`/g;
+  const linkRegex = /\[(.*?)\]\((https?:\/\/[^\s]+)\)/g;
   let lastIndex = 0;
 
-  // Xử lý code block trước
   response.replace(codeBlockRegex, (match, language, code, offset) => {
-    // Thêm đoạn văn bản trước đoạn code block
     if (offset > lastIndex) {
       const textNode = document.createTextNode(
         response.slice(lastIndex, offset)
       );
       textElement.appendChild(textNode);
     }
-
-    // Tạo code block với Prism.js syntax highlight
+    const header = document.createElement('div');
     const pre = document.createElement('pre');
     const codeElement = document.createElement('code');
     codeElement.className = `language-${
@@ -509,35 +414,55 @@ const renderResponse = (response, textElement) => {
     }`;
     codeElement.textContent = code.trim();
 
+    header.classList.add('code-header');
+    const langName = document.createElement('span');
+    langName.textContent = language ? language.trim() : 'plaintext';
+    langName.classList.add('language-name');
+    header.appendChild(langName);
+
+    const copyButton = document.createElement('button');
+    copyButton.textContent = 'Copy';
+    copyButton.classList.add('copy-button');
+    copyButton.addEventListener('click', () => {
+      navigator.clipboard.writeText(code.trim()).then(() => {
+        copyButton.textContent = 'Copied!';
+        setTimeout(() => {
+          copyButton.textContent = 'Copy';
+        }, 2000);
+      });
+    });
+    header.appendChild(copyButton);
+
+    textElement.appendChild(header);
     pre.appendChild(codeElement);
     textElement.appendChild(pre);
 
     lastIndex = offset + match.length;
   });
 
-  // Thêm văn bản còn lại sau đoạn code block
   if (lastIndex < response.length) {
-    const textNode = document.createTextNode(response.slice(lastIndex));
-    textElement.appendChild(textNode);
+    const remainingText = response.slice(lastIndex);
+    let formattedText = remainingText;
+
+    formattedText = formattedText.replace(inlineCodeRegex, (match, code) => {
+      return `<code>${code.trim()}</code>`;
+    });
+
+    formattedText = formattedText.replace(linkRegex, (match, text, url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    });
+
+    const wrapper = document.createElement('span');
+    wrapper.innerHTML = formattedText;
+    textElement.appendChild(wrapper);
   }
 
-  // Xử lý inline code
-  let finalHTML = textElement.innerHTML; // Lưu nội dung hiện tại của textElement vào biến tạm
-  finalHTML = finalHTML.replace(inlineCodeRegex, (match, code) => {
-    return `<code>${code.trim()}</code>`;
-  });
-
-  // Xóa nội dung hiện tại và thêm nội dung đã xử lý
-  textElement.innerHTML = finalHTML;
-
-  // Kích hoạt lại Prism.js để highlight
   Prism.highlightAllUnder(textElement);
 
   isResponseGenerating = false;
-  localStorage.setItem('saved-chats', chatContainer.innerHTML); // Lưu đoạn chat vào local storage
-  chatContainer.scrollTo(0, chatContainer.scrollHeight); // Cuộn xuống cuối
+  chatContainer.scrollTo(0, chatContainer.scrollHeight);
 };
-// Show a loading animation while waiting for the API response
+
 const showLoadingAnimation = () => {
   const html = `<div class="message-content">
                   <img class="avatar" src="../assets/img/pumpkin.svg" alt="Avatar">
@@ -553,76 +478,56 @@ const showLoadingAnimation = () => {
   const incomingMessageDiv = createMessageElement(html, 'incoming', 'loading');
   chatContainer.appendChild(incomingMessageDiv);
 
-  chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to the bottom
+  chatContainer.scrollTo(0, chatContainer.scrollHeight);
   generateAPIResponse(incomingMessageDiv);
 };
 
-// Copy message text to the clipboard
 const copyMessage = (copyButton) => {
   const messageText = copyButton.parentElement.querySelector('.text').innerText;
 
   navigator.clipboard.writeText(messageText);
-  copyButton.innerText = 'done'; // Show confirmation icon
-  setTimeout(() => (copyButton.innerText = 'content_copy'), 1000); // Revert icon after 1 second
+  copyButton.innerText = 'done';
+  setTimeout(() => (copyButton.innerText = 'content_copy'), 1000);
 };
 
-// Handle sending outgoing chat messages
-
-// Cập nhật hàm để thêm câu hỏi hiện tại vào sessionData
 const handleOutgoingChat = () => {
   userMessage = messageInput.innerText.trim() || userMessage;
-  if (!userMessage || isResponseGenerating) return; // Exit if no message or response is generating
+  if (!userMessage || isResponseGenerating) return;
 
   isResponseGenerating = true;
-
-  // Save the question with the role as "user"
   sessionData.push({ role: 'user', content: userMessage });
 
   const html = `<div class="message-content">
-                  <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
                   <p class="text"></p>
+                  <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
                 </div>`;
 
   const outgoingMessageDiv = createMessageElement(html, 'outgoing');
   outgoingMessageDiv.querySelector('.text').innerText = userMessage;
   chatContainer.appendChild(outgoingMessageDiv);
 
-  // typingForm.reset(); // Clear the input field
-  document.body.classList.add('hide-header');
-  chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to the bottom
-  setTimeout(showLoadingAnimation, 500); // Show loading animation for response
+  document.querySelector('.introduce').style.display = 'none';
+  chatContainer.scrollTo(0, chatContainer.scrollHeight);
+  setTimeout(showLoadingAnimation, 500);
 
-  // Update the session in localStorage
   updateSessionInLocalStorage(sessionData);
 };
 
-// Function to update the session data in localStorage
-// Function to update the session data in localStorage
 const updateSessionInLocalStorage = (sessionData) => {
-  // Map sessionData to only include role and content
   const formattedSessionData = sessionData.map((item) => {
     if (item.question) {
       return { role: 'user', content: item.question };
     } else if (item.answer) {
       return { role: 'model', content: item.answer };
     }
-    return item; // Return as-is if it doesn't match either question or answer
+    return item;
   });
 
   sessionData = formattedSessionData;
 };
 
-// Delete all chats from local storage when button is clicked
-deleteChatButton.addEventListener('click', () => {
-  if (confirm('Are you sure you want to delete all the chats?')) {
-    localStorage.removeItem('saved-chats');
-    loadDataFromLocalstorage();
-  }
-});
+const sessionList = document.getElementById('session-list');
 
-const sessionList = document.getElementById('session-ul');
-
-// Function to load sessions from the database and display them
 const loadSessions = async () => {
   sessionList.innerHTML = '';
 
@@ -632,44 +537,51 @@ const loadSessions = async () => {
     sessions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     for (const session of sessions) {
-      const messages = await getAllPromts(session._id);
-
-      // Only proceed if there are messages in the session
-      if (messages && messages.length > 0) {
-        // Use the question of the first prompt as the session name (if available)
-        const sessionName = messages[0].question
-          ? messages[0].question
-          : `Chat session ${session._id}`;
-
+      if (session.firstMessage) {
         const li = document.createElement('li');
         li.classList.add('session-item');
 
-        // Set the text of li first
         const text = document.createElement('p');
-        text.innerText = sessionName;
-        text.title = sessionName;
+        text.innerText = session.firstMessage;
+        text.title = session.firstMessage;
+        const picked = localStorage.getItem('picked_sessionId');
+        if (picked === session._id) {
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark') {
+            li.style.backgroundColor = '#212121';
+          } else {
+            li.style.backgroundColor = '#ececec';
+          }
+        }
         li.appendChild(text);
 
-        // Create the delete button
         const deleteButton = document.createElement('div');
         deleteButton.innerText = 'x';
         deleteButton.title = 'Delete session';
         deleteButton.classList.add('delete-session-button');
         deleteButton.addEventListener('click', async (event) => {
           if (confirm('Are you sure you want to delete this session?')) {
-            deleteSession(session._id);
-            loadSessions();
+            await deleteSessionById(session._id);
+            console.log('session._id', session._id);
           }
         });
 
-        // Append the delete button after setting innerText
         li.appendChild(deleteButton);
 
         li.addEventListener('click', async () => {
           localStorage.setItem('picked_sessionId', session._id);
+          document.querySelectorAll('.session-item').forEach((item) => {
+            item.style.backgroundColor = 'transparent';
+          });
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark') {
+            li.style.backgroundColor = '#212121';
+          } else {
+            li.style.backgroundColor = '#ececec';
+          }
+          const messages = await getAllPromts(session._id);
           displaySessionChat(session._id, messages);
 
-          // Check and add elements to sessionData if question and answer fields are present
           const hasQuestion = sessionData.some((item) => item.question);
           const hasAnswer = sessionData.some((item) => item.answer);
 
@@ -708,49 +620,43 @@ const loadSessions = async () => {
   }
 };
 
-// Gọi hàm để tải session khi trang được tải
 document.addEventListener('DOMContentLoaded', function () {
-  // Xóa 'saved-chat' trong localStorage khi trang tải
   localStorage.removeItem('saved-chat');
 
-  // Gọi hàm loadSessions để tải dữ liệu session
   loadSessions();
 });
 localStorage.removeItem('saved-chat');
 
 const displaySessionChat = (sessionID, messages) => {
-  // Set the current session ID
   currentSessionID = sessionID;
   console.log(sessionID);
-  localStorage.setItem('picked_sessionId', sessionID); // Save the current chat to local storage
+  localStorage.setItem('picked_sessionId', sessionID);
 
-  // Clear the current chat container
   chatContainer.innerHTML = '';
-  const header = document.querySelector('.header'); // Replace with the appropriate selector for your header
+  const header = document.querySelector('.introduce');
   if (header) {
-    header.style.display = 'none'; // Hide the header
+    header.style.display = 'none';
+  }
+  if (messages.length === 0) {
+    header.style.display = 'block';
   }
 
-  // Clear the sessionData array to avoid mixing messages
-  sessionData = []; // Reset sessionData for the new session
+  sessionData = [];
 
-  // Loop through the messages and append them to the chat container
   messages.forEach((message) => {
-    // Hiển thị câu hỏi
     if (message.question) {
       const questionElement = createMessageElement(
         `
         <div class="message-content">
-          <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
           <p class="text">${message.question}</p>
+          <img class="avatar" src="../assets/img/user.jpg" alt="User avatar">
         </div>
       `,
         'outgoing'
-      ); // Class cho câu hỏi
+      );
       chatContainer.appendChild(questionElement);
     }
 
-    // Hiển thị câu trả lời
     if (message.answer) {
       const answerElement = createMessageElement(
         `
@@ -760,27 +666,20 @@ const displaySessionChat = (sessionID, messages) => {
         </div>
       `,
         'incoming'
-      ); // Class cho câu trả lời
+      );
 
-      // Append the answer element to the chat container first
       chatContainer.appendChild(answerElement);
 
-      // Call renderResponse to handle formatting for code blocks or inline code
-      const textElement = answerElement.querySelector('.text'); // Get the <p> element for text content
-      renderResponse(message.answer, textElement); // Render the formatted response
+      const textElement = answerElement.querySelector('.text');
+      renderResponse(message.answer, textElement);
     }
 
-    // Push existing messages into sessionData for continuation
-    sessionData.push(message); // Add message to sessionData to continue conversation
+    sessionData.push(message);
   });
 };
 
-// Call this function after deleting chats or when the page loads
-loadSessions();
+let currentSessionID = null;
 
-let currentSessionID = null; // Variable to store the currently active session ID
-
-// Set userMessage and handle outgoing chat when a suggestion is clicked
 suggestions.forEach((suggestion) => {
   suggestion.addEventListener('click', () => {
     userMessage = suggestion.querySelector('.text').innerText;
@@ -791,68 +690,97 @@ suggestions.forEach((suggestion) => {
 messageInput.addEventListener('keydown', function (event) {
   if (event.key === 'Enter') {
     if (event.shiftKey) {
-      // Nếu Shift + Enter thì cho phép xuống dòng
       document.execCommand('insertHTML', false, '<br><br>');
-      event.preventDefault(); // Ngăn chặn hành động mặc định của Enter
+      event.preventDefault();
     } else {
-      // Nếu chỉ nhấn Enter thì gửi tin nhắn
-      event.preventDefault(); // Ngăn chặn hành động mặc định của Enter
-      const message = messageInput.innerHTML; // Lấy nội dung
-      handleOutgoingChat(); // Thay bằng logic gửi tin nhắn
-      messageInput.innerHTML = ''; // Xóa nội dung sau khi gửi
+      event.preventDefault();
+      const message = messageInput.innerHTML;
+      handleOutgoingChat();
+      messageInput.innerHTML = '';
     }
   }
 });
 
-// Prevent default form submission and handle outgoing chat
 typingForm.addEventListener('submit', (e) => {
   e.preventDefault();
   handleOutgoingChat();
 });
 
+document.getElementById("send-message-button").addEventListener("click", function(event) {
+  event.preventDefault(); 
+  handleOutgoingChat();
+  document.getElementById("message-input").value = ""; 
+  document.getElementById("prompt-textarea").innerHTML = "";
+});
+
+
 loadDataFromLocalstorage();
 
-// when user login, check lastest session if exist message return it or create new session
-const checkLastestSession = async (userID) => {
-  const sessions = await getAllSessions(userID);
-  if (sessions.length === 0) {
-    createSession({
-      userID,
-      sessionID: Math.random().toString(36).substring(7),
-      timestamp: new Date().getTime(),
-    });
-  } else {
-    const lastestSession = sessions[sessions.length - 1];
-    const messages = await getAllMessages(lastestSession.sessionID);
-    messages.forEach((message) => {
-      const html = `<div class="message-content">
-                      <img class="avatar" src="../assets/img/pumpkin.svg" alt="Gemini avatar">
-                      <p class="text"></p>
-                    </div>
-                    <span onClick="copyMessage(this)" class="icon material-symbols-rounded">content_copy</span>`;
-      const incomingMessageDiv = createMessageElement(html, 'incoming');
-      incomingMessageDiv.querySelector('.text').innerText = message.promtText;
-      chatContainer.appendChild(incomingMessageDiv);
-    });
+const loadCurrentSession = async () => {
+  if (sessionId) {
+    const messages = await getAllPromts(sessionId);
+    console.log('messages', messages);
+    displaySessionChat(sessionId, messages);
   }
 };
 
-document
-  .getElementById('menu-toggle-button')
-  .addEventListener('click', function () {
-    // loadSessions();
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
+loadCurrentSession();
 
-    sidebar.classList.toggle('expanded'); // Mở rộng/thu gọn sidebar
-  });
+var modal = document.getElementById('modal-user');
+var btnUser = document.getElementById('profile-toggle-btn-header');
+var span = document.getElementsByClassName('close')[0];
+btnUser.addEventListener('click', function (event) {
+  modal.style.display = 'flex';
+});
+span.addEventListener('click', function (event) {
+  modal.style.display = 'none';
+});
+window.addEventListener('click', function (event) {
+  if (event.target === modal) {
+    modal.style.display = 'none';
+  }
+});
 
-document
-  .getElementById('profile-toggle-button')
-  .addEventListener('click', function () {
-    const profileMenu = document.getElementById('profile-menu');
-    profileMenu.style.display =
-      profileMenu.style.display === 'none' || profileMenu.style.display === ''
-        ? 'block'
-        : 'none';
-  });
+const btnHideSidebar = document.getElementById('menu-toggle-button-sidebar');
+btnHideSidebar.addEventListener('click', () => {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.add('collapse');
+});
+
+const btnHeaderVisibaleSidebar = document.getElementById(
+  'menu-toggle-button-header'
+);
+btnHeaderVisibaleSidebar.addEventListener('click', () => {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('collapse');
+});
+
+window.addEventListener('load', () => {
+  if (window.innerWidth < 767) {
+    sidebar.classList.add('collapse');
+  }
+  const dataTheme = localStorage.getItem(theme);
+  if (dataTheme) {
+    document.documentElement.setAttribute('data-theme', theme);
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('theme', light);
+  }
+});
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+
+  document.getElementById('themeToggle').checked = theme === 'dark';
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  setTheme(savedTheme);
+});
+
+document.getElementById('themeToggle').addEventListener('change', function () {
+  const theme = this.checked ? 'dark' : 'light';
+  setTheme(theme);
+});
