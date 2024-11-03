@@ -16,6 +16,9 @@ const API_KEY = 'AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM';
 const BASE_URL = 'https://arcane-sea-85415-cb9bc29a925f.herokuapp.com';
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
+
+
+
 async function getAllSessions() {
   const userId = sessionStorage.getItem('userID');
 
@@ -696,6 +699,14 @@ typingForm.addEventListener('submit', (e) => {
   e.preventDefault();
   handleOutgoingChat();
 });
+
+document.getElementById("send-message-button").addEventListener("click", function(event) {
+  event.preventDefault(); 
+  handleOutgoingChat();
+  document.getElementById("message-input").value = ""; 
+  document.getElementById("prompt-textarea").innerHTML = "";
+});
+
 
 loadDataFromLocalstorage();
 

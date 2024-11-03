@@ -2,9 +2,6 @@
   .chat-container {
     width: 100%;
   }
-  .btn-user-header {
-    display: none;
-  }
   #add-button-mobile {
     display: block;
     border-radius: 6px;
