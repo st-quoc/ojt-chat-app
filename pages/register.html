@@ -1,101 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Form</title>
-  <link rel="stylesheet" href="../styles/reset.css">
-  <link rel="stylesheet" href="../styles/base.css">
-  <link
-  href="https://www.cssscript.com/demo/alert-confirm-toast-cute/style.css"
-  rel="stylesheet"
-  type="text/css"
-/>
-</head>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="../styles/reset.css" />
+    <link rel="stylesheet" href="../styles/login.css" />
+    <link
+      href="https://www.cssscript.com/demo/alert-confirm-toast-cute/style.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
   <body>
     <div class="wrapper">
-      <div class="container">
+      <div class="bg-1"></div>
+      <div class="bg-2"></div>
+      <div class="bg-3"></div>
+      <div class="login-container">
         <div class="illustration">
-          <img src="../assets/theme.png" alt="" />
+          <img src="../assets/login-bg.jpg" alt="" />
         </div>
         <div class="form">
-          <h1>Create Account</h1>
+          <div class="title">
+            <h1>Create your account</h1>
+            <div class="word">
+              <span>S</span>
+              <span>-</span>
+              <span>T</span>
+              <span>I</span>
+              <span>E</span>
+              <span>R</span>
+            </div>
+          </div>
           <form>
-            <label for="username">User Name</label>
-            <input type="text" id="username" name="name" required />
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required />
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required />
-            <label for="confirm-password">Confirm Password</label>
-            <input
-              type="password"
-              id="confirm-password"
-              name="confirm-password"
-              required
-            />
-            <button type="submit" onclick="register(event)">Sign Up</button>
+            <div class="field">
+              <input
+                type="text"
+                id="username"
+                name="name"
+                required
+                placeholder=" "
+              />
+              <label for="username">User Name</label>
+            </div>
+            <div class="field">
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                placeholder=" "
+              />
+              <label for="email">Email</label>
+            </div>
+            <div class="field">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                placeholder=" "
+              />
+              <label for="password">Password</label>
+            </div>
+            <div class="field">
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirm-password"
+                required
+                placeholder=" "
+              />
+              <label for="confirm-password">Confirm Password</label>
+            </div>
+
+            <button type="submit" class="btn-login" onclick="register(event)">
+              <span>Sign Up</span>
+            </button>
           </form>
-          <p>
-            Already have an account?
+          <div class="btn-signup">
+            <p>Already have an account?</p>
             <a href="../index.html">Login here</a>
-          </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</body>
-<script src="https://www.cssscript.com/demo/alert-confirm-toast-cute/cute-alert.js"></script>
-<script>
-  const register = async (e) => {
-    e.preventDefault();
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-
-    if (password !== confirmPassword) {
-      // Passwords not match
-      cuteToast({
-        type: 'error',
-        title: 'Error',
-        message: 'Passwords do not match'
-      })
-      return;
-    }
-
-    const response = await fetch('http://localhost:3000/api/users/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        username,
-        email,
-        password
-      })
-    });
-
-    const data = await response.json();
-    console.log(data)
-    if (data.message === 'User registered successfully') {
-      cuteToast({
-        type: 'success',
-        title: 'Success',
-        message: 'User registered successfully'
-      })
-
-      // Redirect to login page timeout
-      setTimeout(() => {
-        window.location.href = '/index.html';
-      }), 4000
-
-    } else {
-      alert(data.message); 
-    }
-  }
-
-</script>
+  </body>
+  <script src="https://www.cssscript.com/demo/alert-confirm-toast-cute/cute-alert.js"></script>
+  <script src="../js/index.js"></script>
 </html>

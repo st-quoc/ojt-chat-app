@@ -18,6 +18,10 @@ app.use(express.urlencoded({ extended: false }));
 // Serve static files from the 'public' directory if needed
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
 // Serve chat.html from the 'pages' directory
 app.get('/chat', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'chat.html'));
