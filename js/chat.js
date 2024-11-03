@@ -122,6 +122,12 @@ async function deleteSessions() {
       }
     );
 
+    cuteToast({
+      type: 'success',
+      title: 'Success',
+      message: 'Sessions deleted successfully!',
+    });
+
     if (response.ok) {
       const data = await response.json();
       console.log(data.message); // In ra thông báo thành công
