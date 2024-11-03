@@ -18,3 +18,24 @@ exports.loginUser = async (req, res) => {
     ApiResponse.error(res, error.message, 401);
   }
 };
+
+exports.requestPasswordReset = async (req, res) => {
+  try {
+    const result = await AuthServices.sendResetPasswordEmail(req.body.email);
+    ApiResponse.success(res, result);
+  } catch (error) {
+    ApiResponse.error(res, error.message, 500);
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const token = req.params.token;
+
+    const { newPassword } = req.body;
+    const result = await AuthServices.resetPassword(token, newPassword);
+    ApiResponse.success(res, result);
+  } catch (error) {
+    ApiResponse.error(res, error.message, 400);
+  }
+};
