@@ -16,9 +16,6 @@ const API_KEY = 'AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM';
 const BASE_URL = 'https://arcane-sea-85415-cb9bc29a925f.herokuapp.com';
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
-
-
-
 async function getAllSessions() {
   const userId = sessionStorage.getItem('userID');
 
@@ -95,8 +92,7 @@ async function deleteSessionById(sessionId) {
 }
 
 async function deleteSessions() {
-  // Giả sử bạn lấy `userId` từ session (có thể là từ cookie hoặc localStorage)
-  const userId = sessionStorage.getItem('userID'); // Hoặc dùng phương thức phù hợp để lấy userId từ session
+  const userId = sessionStorage.getItem('userID');
 
   if (!userId) {
     console.error('User ID not found in session');
@@ -104,35 +100,28 @@ async function deleteSessions() {
   }
 
   try {
-    const response = await fetch(
-      `http://localhost:3000/api/sessions/${userId}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    cuteToast({
-      type: 'success',
-      title: 'Success',
-      message: 'Sessions deleted successfully!',
+    const response = await fetch(`${BASE_URL}/api/sessions/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
-        if (response.ok) {
-          localStorage.removeItem('picked_sessionId');
-          await addNewSession();
-          await loadSessions();
-        } else {
-          console.error('Error:', response);
-        }
-      } catch (error) {
-        console.error('Failed to delete all sessions:', error);
-      }
+    if (response.ok) {
+      localStorage.removeItem('picked_sessionId');
+      await Promise.all([addNewSession(), loadSessions()]);
+      cuteToast({
+        type: 'success',
+        title: 'Success',
+        message: 'Sessions deleted successfully!',
+      });
+    } else {
+      console.error('Error:', response.statusText);
     }
-  });
-});
+  } catch (error) {
+    console.error('Failed to delete all sessions:', error);
+  }
+}
 
 const btnLogout = document.querySelector('.logout');
 btnLogout.addEventListener('click', () => {
@@ -706,13 +695,14 @@ typingForm.addEventListener('submit', (e) => {
   handleOutgoingChat();
 });
 
-document.getElementById("send-message-button").addEventListener("click", function(event) {
-  event.preventDefault(); 
-  handleOutgoingChat();
-  document.getElementById("message-input").value = ""; 
-  document.getElementById("prompt-textarea").innerHTML = "";
-});
-
+document
+  .getElementById('send-message-button')
+  .addEventListener('click', function (event) {
+    event.preventDefault();
+    handleOutgoingChat();
+    document.getElementById('message-input').value = '';
+    document.getElementById('prompt-textarea').innerHTML = '';
+  });
 
 loadDataFromLocalstorage();
 
