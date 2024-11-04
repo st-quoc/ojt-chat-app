@@ -23,7 +23,6 @@ async function login(event) {
     sessionStorage.setItem('userID', data.data.userId);
     window.location.href = '/pages/chatPage.html';
   } catch (error) {
-    console.log('hello', data.userId);
     displayErrorMessage('Network error or server is down');
   }
 }
