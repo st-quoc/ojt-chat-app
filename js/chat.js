@@ -16,9 +16,6 @@ const API_KEY = 'AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM';
 const BASE_URL = 'https://arcane-sea-85415-cb9bc29a925f.herokuapp.com';
 const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
 
-
-
-
 async function getAllSessions() {
   const userId = sessionStorage.getItem('userID');
 
@@ -72,61 +69,45 @@ async function deletePrompts(sessionId) {
 
 async function deleteSessionById(sessionId) {
   try {
-    const response = await fetch(`${BASE_URL}/api/delasessions/`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ sessionId }),
-    });
+    cuteAlert({
+      type: 'question',
+      title: 'Delete this session',
+      message: 'Are you sure you want to delete this session?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+    }).then(async (e) => {
+      if (e == 'confirm') {
+        try {
+          const response = await fetch(`${BASE_URL}/api/delasessions/`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ sessionId }),
+          });
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data.message);
-      await addNewSession();
-      loadSessions();
-    } else {
-      const errorData = await response.json();
-      console.error('Error:', errorData.error);
-    }
+          if (response.ok) {
+            await addNewSession();
+            loadSessions();
+            cuteToast({
+              type: 'success',
+              title: 'Success',
+              message: 'Session deleted successfully!',
+            });
+          } else {
+            const errorData = await response.json();
+            console.error('Error:', errorData.error);
+          }
+        } catch (error) {
+          console.error('Failed to delete all sessions:', error);
+        }
+      }
+    });
   } catch (error) {
     console.error('Failed to delete session:', error);
   }
 }
 
-document.querySelector('.deleteAll').addEventListener('click', () => {
-  modal.style.display = 'none';
-  cuteAlert({
-    type: 'question',
-    title: 'Delete All Sessions',
-    message: 'Are you sure you want to delete all sessions?',
-    confirmText: 'Yes',
-    cancelText: 'No',
-  }).then(async (e) => {
-    if (e == 'confirm') {
-      try {
-        const response = await fetch(`${BASE_URL}/api/sessions`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId: sessionStorage.getItem('userID') }),
-        });
-        console.log('response', response);
-
-        if (response.ok) {
-          localStorage.removeItem('picked_sessionId');
-          await addNewSession();
-          await loadSessions();
-        } else {
-          console.error('Error:', response);
-        }
-      } catch (error) {
-        console.error('Failed to delete all sessions:', error);
-      }
-    }
-  });
-});
 
 const btnLogout = document.querySelector('.logout');
 btnLogout.addEventListener('click', () => {
@@ -554,10 +535,9 @@ const loadSessions = async () => {
         deleteButton.title = 'Delete session';
         deleteButton.classList.add('delete-session-button');
         deleteButton.addEventListener('click', async (event) => {
-          if (confirm('Are you sure you want to delete this session?')) {
+  
             await deleteSessionById(session._id);
-            console.log('session._id', session._id);
-          }
+
         });
 
         li.appendChild(deleteButton);
@@ -700,13 +680,14 @@ typingForm.addEventListener('submit', (e) => {
   handleOutgoingChat();
 });
 
-document.getElementById("send-message-button").addEventListener("click", function(event) {
-  event.preventDefault(); 
-  handleOutgoingChat();
-  document.getElementById("message-input").value = ""; 
-  document.getElementById("prompt-textarea").innerHTML = "";
-});
-
+document
+  .getElementById('send-message-button')
+  .addEventListener('click', function (event) {
+    event.preventDefault();
+    handleOutgoingChat();
+    document.getElementById('message-input').value = '';
+    document.getElementById('prompt-textarea').innerHTML = '';
+  });
 
 loadDataFromLocalstorage();
 
@@ -753,9 +734,9 @@ window.addEventListener('load', () => {
   if (window.innerWidth < 767) {
     sidebar.classList.add('collapse');
   }
-  const dataTheme = localStorage.getItem(theme);
+  const dataTheme = localStorage.getItem('theme');
   if (dataTheme) {
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('data-theme', dataTheme);
   } else {
     document.documentElement.setAttribute('data-theme', 'light');
     localStorage.setItem('theme', light);
@@ -777,4 +758,38 @@ window.addEventListener('DOMContentLoaded', () => {
 document.getElementById('themeToggle').addEventListener('change', function () {
   const theme = this.checked ? 'dark' : 'light';
   setTheme(theme);
+});
+
+document.querySelector('.deleteAll').addEventListener('click', () => {
+  modal.style.display = 'none';
+  cuteAlert({
+    type: 'question',
+    title: 'Delete All Sessions',
+    message: 'Are you sure you want to delete all sessions?',
+    confirmText: 'Yes',
+    cancelText: 'No',
+  }).then(async (e) => {
+    if (e == 'confirm') {
+      try {
+        const response = await fetch(`${BASE_URL}/api/sessions`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: sessionStorage.getItem('userID') }),
+        });
+        console.log('response', response);
+
+        if (response.ok) {
+          localStorage.removeItem('picked_sessionId');
+          await addNewSession();
+          await loadSessions();
+        } else {
+          console.error('Error:', response);
+        }
+      } catch (error) {
+        console.error('Failed to delete all sessions:', error);
+      }
+    }
+  });
 });

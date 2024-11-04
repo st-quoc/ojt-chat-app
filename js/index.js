@@ -5,26 +5,37 @@ if (sessionStorage.getItem('userID')) {
 }
 async function login(event) {
   event.preventDefault();
+
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
+
+  if (!validateEmail(email)) {
+    return displayErrorMessage('Invalid email format');
+  }
+
   try {
     const response = await fetch(`${BASE_URL}/api/users/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
+      body: JSON.stringify({ email, password }),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Login failed');
+    }
+
     const data = await response.json();
-    console.log('sss', data.data.userId);
     sessionStorage.setItem('userID', data.data.userId);
     window.location.href = '/pages/chatPage.html';
   } catch (error) {
-    console.log('hello', data.userId);
-    displayErrorMessage('Network error or server is down');
+    cuteToast({
+      type: 'error',
+      title: 'Error',
+      message: error.message || 'Information is not correct!',
+    });
   }
 }
 
@@ -32,6 +43,11 @@ function displayErrorMessage(message) {
   const errorMessage = document.getElementById('error-message');
   errorMessage.textContent = 'Login failed: ' + message;
   errorMessage.style.display = 'block';
+}
+
+function validateEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
 }
 
 const spans = document.querySelectorAll('.word span');
@@ -54,7 +70,9 @@ const register = async (e) => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const confirmPassword = document.getElementById('confirm-password').value;
-
+  if (!validateEmail(email)) {
+    return displayErrorMessage('Invalid email format');
+  }
   if (password !== confirmPassword) {
     cuteToast({
       type: 'error',

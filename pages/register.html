@@ -13,6 +13,7 @@
     />
   </head>
   <body>
+    <div class="falling-sakura"></div>
     <div class="wrapper">
       <div class="bg-1"></div>
       <div class="bg-2"></div>
@@ -80,13 +81,24 @@
             </button>
           </form>
           <div class="btn-signup">
-            <p>Already have an account?</p>
+            <p>Have an account?</p>
             <a href="../index.html">Login here</a>
           </div>
+          <div class="google-login-btn" id="googleRegisterBtn" style="width: 40%;">
+            <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo">
+            Đăng nhập bằng Google
+          </div>
+          
         </div>
       </div>
     </div>
   </body>
   <script src="https://www.cssscript.com/demo/alert-confirm-toast-cute/cute-alert.js"></script>
   <script src="../js/index.js"></script>
+  <script src="/js/sakura.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script> <!-- Your custom script -->
+  <script src="/js/outh2.js"></script>
+
 </html>
