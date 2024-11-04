@@ -69,23 +69,40 @@ async function deletePrompts(sessionId) {
 
 async function deleteSessionById(sessionId) {
   try {
-    const response = await fetch(`${BASE_URL}/api/delasessions/`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ sessionId }),
-    });
+    cuteAlert({
+      type: 'question',
+      title: 'Delete this session',
+      message: 'Are you sure you want to delete this session?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+    }).then(async (e) => {
+      if (e == 'confirm') {
+        try {
+          const response = await fetch(`${BASE_URL}/api/delasessions/`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ sessionId }),
+          });
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data.message);
-      await addNewSession();
-      loadSessions();
-    } else {
-      const errorData = await response.json();
-      console.error('Error:', errorData.error);
-    }
+          if (response.ok) {
+            await addNewSession();
+            loadSessions();
+            cuteToast({
+              type: 'success',
+              title: 'Success',
+              message: 'Session deleted successfully!',
+            });
+          } else {
+            const errorData = await response.json();
+            console.error('Error:', errorData.error);
+          }
+        } catch (error) {
+          console.error('Failed to delete all sessions:', error);
+        }
+      }
+    });
   } catch (error) {
     console.error('Failed to delete session:', error);
   }
@@ -518,10 +535,9 @@ const loadSessions = async () => {
         deleteButton.title = 'Delete session';
         deleteButton.classList.add('delete-session-button');
         deleteButton.addEventListener('click', async (event) => {
-          if (confirm('Are you sure you want to delete this session?')) {
+  
             await deleteSessionById(session._id);
-            console.log('session._id', session._id);
-          }
+
         });
 
         li.appendChild(deleteButton);
