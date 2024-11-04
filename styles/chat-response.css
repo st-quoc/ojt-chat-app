@@ -25,4 +25,12 @@
   .chat-container header .btn-menu-mobile {
     display: block;
   }
+
+
+}
+
+@media screen and (max-width: 400px) {
+  .introduce .subtitle {
+    display: none;
+  }
 }

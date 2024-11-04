@@ -207,11 +207,13 @@ pre > code {
   color: white !important;
   border-color: pink !important;
 }
-.cute-alert-container {
-  background-color: #e9cbd5;
-}
 
-.cute-alert-content {
-  background-color: #e9cbd5;
-  color: #fff;
+.question-bg{
+  background-color: #ff758f !important;
+}
+.confirm-button {
+  background-color: #fd1100 !important;
+}
+.error-bg {
+  background-color: #ff758f !important;
 }
