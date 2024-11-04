@@ -734,9 +734,9 @@ window.addEventListener('load', () => {
   if (window.innerWidth < 767) {
     sidebar.classList.add('collapse');
   }
-  const dataTheme = localStorage.getItem(theme);
+  const dataTheme = localStorage.getItem('theme');
   if (dataTheme) {
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('data-theme', dataTheme);
   } else {
     document.documentElement.setAttribute('data-theme', 'light');
     localStorage.setItem('theme', light);
