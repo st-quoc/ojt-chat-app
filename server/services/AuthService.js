@@ -40,20 +40,20 @@ exports.sendResetPasswordEmail = async (email) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: 'dat.dev.gw@gmail.com',
+      pass: 'zqjj txcn pqph zdfm',
     },
   });
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: 'dat.dev.gw@gmail.com',
     to: email,
     subject: '[S-Tier] - Password Reset',
     text:
       `Hey there,\n\n` +
       `We noticed you might have misplaced your password—perhaps it ran off to join the circus or fell in love with a cat? 😸 No worries!\n\n` +
       `Just click the magical link below to reset your password and bring it back home:\n\n` +
-      `👉 http://${process.env.FRONTEND_URL}/pages/redirect-reset.html?token=${resetToken} 👈\n\n` +
+      `👉 https://ojt-chat-app.vercel.app/pages/redirect-reset.html?token=${resetToken} 👈\n\n` +
       `Remember, this link will expire in 1 hour—just like that sandwich you forgot in the fridge! 🥪\n\n` +
       `Happy password hunting! 🕵️‍♂️\n\n` +
       `Cheers,\n` +
