@@ -251,7 +251,7 @@ html[data-theme='light'] .typing-area .typing-form .btn-send svg {
   background: var(--chat-input);
   color: var(--text-color);
 }
-.typing-area .typing-input:focus{
+.typing-area .typing-input:focus {
   border: none;
   outline: none;
 }
@@ -374,7 +374,7 @@ html[data-theme='light'] .typing-area .typing-form .btn-send svg {
   width: 100%;
   border-radius: 0.135rem;
   background-position: -800px 0;
-  background: linear-gradient(to right, #4285f4, var(--border-menu), #4285f4);
+  background: linear-gradient(to right, #ff758f, var(--border-menu), #ff758f);
   animation: loading 3s linear infinite;
 }
 
