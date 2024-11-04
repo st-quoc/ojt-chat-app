@@ -108,7 +108,6 @@ async function deleteSessionById(sessionId) {
   }
 }
 
-
 const btnLogout = document.querySelector('.logout');
 btnLogout.addEventListener('click', () => {
   modal.style.display = 'none';
@@ -535,9 +534,7 @@ const loadSessions = async () => {
         deleteButton.title = 'Delete session';
         deleteButton.classList.add('delete-session-button');
         deleteButton.addEventListener('click', async (event) => {
-  
-            await deleteSessionById(session._id);
-
+          await deleteSessionById(session._id);
         });
 
         li.appendChild(deleteButton);
