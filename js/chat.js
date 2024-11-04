@@ -91,37 +91,6 @@ async function deleteSessionById(sessionId) {
   }
 }
 
-async function deleteSessions() {
-  const userId = sessionStorage.getItem('userID');
-
-  if (!userId) {
-    console.error('User ID not found in session');
-    return;
-  }
-
-  try {
-    const response = await fetch(`${BASE_URL}/api/sessions/${userId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (response.ok) {
-      localStorage.removeItem('picked_sessionId');
-      await Promise.all([addNewSession(), loadSessions()]);
-      cuteToast({
-        type: 'success',
-        title: 'Success',
-        message: 'Sessions deleted successfully!',
-      });
-    } else {
-      console.error('Error:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Failed to delete all sessions:', error);
-  }
-}
 
 const btnLogout = document.querySelector('.logout');
 btnLogout.addEventListener('click', () => {
@@ -773,4 +742,38 @@ window.addEventListener('DOMContentLoaded', () => {
 document.getElementById('themeToggle').addEventListener('change', function () {
   const theme = this.checked ? 'dark' : 'light';
   setTheme(theme);
+});
+
+document.querySelector('.deleteAll').addEventListener('click', () => {
+  modal.style.display = 'none';
+  cuteAlert({
+    type: 'question',
+    title: 'Delete All Sessions',
+    message: 'Are you sure you want to delete all sessions?',
+    confirmText: 'Yes',
+    cancelText: 'No',
+  }).then(async (e) => {
+    if (e == 'confirm') {
+      try {
+        const response = await fetch(`${BASE_URL}/api/sessions`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId: sessionStorage.getItem('userID') }),
+        });
+        console.log('response', response);
+
+        if (response.ok) {
+          localStorage.removeItem('picked_sessionId');
+          await addNewSession();
+          await loadSessions();
+        } else {
+          console.error('Error:', response);
+        }
+      } catch (error) {
+        console.error('Failed to delete all sessions:', error);
+      }
+    }
+  });
 });
