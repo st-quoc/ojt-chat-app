@@ -784,6 +784,11 @@ document.querySelector('.deleteAll').addEventListener('click', () => {
           localStorage.removeItem('picked_sessionId');
           await addNewSession();
           await loadSessions();
+          cuteToast({
+            type: 'success',
+            title: 'Success',
+            message: 'Sessions deleted successfully!',
+          });
         } else {
           console.error('Error:', response);
         }
