@@ -9,6 +9,10 @@ async function login(event) {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
 
+  if (!validateEmail(email)) {
+    return displayErrorMessage('Invalid email format');
+  }
+
   try {
     const response = await fetch(`${BASE_URL}/api/users/login`, {
       method: 'POST',
@@ -41,6 +45,11 @@ function displayErrorMessage(message) {
   errorMessage.style.display = 'block';
 }
 
+function validateEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
+
 const spans = document.querySelectorAll('.word span');
 spans.forEach((span, idx) => {
   span.addEventListener('click', (e) => {
@@ -61,7 +70,9 @@ const register = async (e) => {
   const email = document.getElementById('email').value;
   const password = document.getElementById('password').value;
   const confirmPassword = document.getElementById('confirm-password').value;
-
+  if (!validateEmail(email)) {
+    return displayErrorMessage('Invalid email format');
+  }
   if (password !== confirmPassword) {
     cuteToast({
       type: 'error',
