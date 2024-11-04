@@ -7,15 +7,12 @@
   </head>
   <body>
     <script>
-      // Lấy token từ URL hiện tại
       const urlParams = new URLSearchParams(window.location.search);
       const token = urlParams.get('token');
 
       if (token) {
-        // Chuyển hướng đến trang reset-password.html và truyền token
         window.location.href = `/pages/reset-password.html?token=${token}`;
       } else {
-        // Nếu không có token, hiển thị thông báo lỗi
         document.body.innerHTML = '<h1>Invalid token or missing token!</h1>';
       }
     </script>
