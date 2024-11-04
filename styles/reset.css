@@ -152,8 +152,6 @@ pre > code {
   background-color: #0056b3;
 }
 
-
-
 .falling-sakura {
   position: fixed;
   top: 0;
@@ -168,26 +166,24 @@ pre > code {
   position: absolute;
   width: 20px;
   height: 20px;
-  background-image: url('../assets/img/sakura.png'); /* Thay đường dẫn bằng hình ảnh hoa anh đào */
+  background-image: url('../assets/img/sakura.png');
   background-size: cover;
   opacity: 2;
-  animation: fall linear forwards; /* Đã thay đổi từ infinite thành forwards */
+  animation: fall linear forwards;
 }
-
 
 @keyframes fall {
   0% {
-      transform: translateY(0vh);
+    transform: translateY(0vh);
   }
   100% {
-    transform: translateY(100vh); /* Vẫn giữ nguyên để hoa rơi đến dưới cùng */
-    opacity: 0.2; /* Tùy chọn: làm hoa mờ đi khi đến dưới cùng */
+    transform: translateY(100vh);
+    opacity: 0.2;
   }
 }
 
-/* CSS cho nút đăng nhập */
 .google-login-btn {
-  font-size:16px;
+  font-size: 16px;
   color: #fff;
   background-color: #e9cbd5;
   border: none;
@@ -205,19 +201,17 @@ pre > code {
   height: 20px;
   margin-right: 8px;
 }
-/* CSS */
+
 #googleRegisterBtn div {
   background-color: #e9cbd5 !important;
-  color: white !important; /* Thay đổi màu chữ nếu cần */
+  color: white !important;
   border-color: pink !important;
- 
 }
-/* Add this CSS to your stylesheet */
 .cute-alert-container {
-  background-color: #e9cbd5; /* Change #yourColor to your preferred background color */
+  background-color: #e9cbd5;
 }
 
 .cute-alert-content {
-  background-color: #e9cbd5; /* Set to your preferred color */
-  color: #fff; /* Optional: Adjust the text color if needed */
+  background-color: #e9cbd5;
+  color: #fff;
 }
