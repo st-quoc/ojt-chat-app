@@ -13,8 +13,15 @@
       rel="stylesheet"
       type="text/css"
     />
+
+      <!-- Include Google API script -->
+      <script src="https://apis.google.com/js/platform.js" async defer></script>
+      <!-- Your custom script -->
+
+    
   </head>
   <body>
+    <div class="falling-sakura"></div>
     <div class="wrapper">
       <div class="bg-1"></div>
       <div class="bg-2"></div>
@@ -54,7 +61,7 @@
                 name="password"
                 placeholder=" "
                 required
-                pattern="^(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$"
+                
                 title="Password must contain at least one uppercase letter, one special character (!@$%^&*), and be at least 8 characters long."
               />
               <label for="password">Password:</label>
@@ -70,11 +77,22 @@
               <p>Have not account yet?</p>
               <a href="./pages/register.html" class="create-account">Sign up</a>
             </div>
+            <div class="google-login-btn" id="googleRegisterBtn">
+              <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo">
+              Đăng nhập bằng Google
+            </div>
+            
           </form>
         </div>
       </div>
     </div>
     <script src="https://www.cssscript.com/demo/alert-confirm-toast-cute/cute-alert.js"></script>
     <script src="/js/index.js"></script>
+    <script src="/js/sakura.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Thư viện jwt-decode để giải mã token -->
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="/js/outh2.js"></script>
+    
   </body>
 </html>
