@@ -13,12 +13,7 @@
       rel="stylesheet"
       type="text/css"
     />
-
-      <!-- Include Google API script -->
-      <script src="https://apis.google.com/js/platform.js" async defer></script>
-      <!-- Your custom script -->
-
-    
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
   </head>
   <body>
     <div class="falling-sakura"></div>
@@ -53,6 +48,7 @@
               />
               <label for="username">Email:</label>
             </div>
+            <span id="error-message-email" class="error-message"></span>
 
             <div class="field">
               <input
@@ -61,15 +57,17 @@
                 name="password"
                 placeholder=" "
                 required
-                
                 title="Password must contain at least one uppercase letter, one special character (!@$%^&*), and be at least 8 characters long."
               />
               <label for="password">Password:</label>
             </div>
+            <span id="error-message-password" class="error-message"></span>
 
-            <a href="./pages/forgot-password.html" class="forgot-password">
-              Forgot password?
-            </a>
+            <div>
+              <a href="./pages/forgot-password.html" class="forgot-password">
+                Forgot password?
+              </a>
+            </div>
             <button class="btn-login" type="submit" onclick="login(event)">
               <span>Login</span>
             </button>
@@ -78,10 +76,12 @@
               <a href="./pages/register.html" class="create-account">Sign up</a>
             </div>
             <div class="google-login-btn" id="googleRegisterBtn">
-              <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo">
+              <img
+                src="https://img.icons8.com/color/16/000000/google-logo.png"
+                alt="Google Logo"
+              />
               Đăng nhập bằng Google
             </div>
-            
           </form>
         </div>
       </div>
@@ -90,9 +90,7 @@
     <script src="/js/index.js"></script>
     <script src="/js/sakura.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- Thư viện jwt-decode để giải mã token -->
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
     <script src="/js/outh2.js"></script>
-    
   </body>
 </html>

@@ -45,6 +45,7 @@
               />
               <label for="username">User Name</label>
             </div>
+            <span id="error-message-username" class="error-message"></span>
             <div class="field">
               <input
                 type="email"
@@ -55,6 +56,7 @@
               />
               <label for="email">Email</label>
             </div>
+            <span id="error-message-email" class="error-message"></span>
             <div class="field">
               <input
                 type="password"
@@ -65,6 +67,7 @@
               />
               <label for="password">Password</label>
             </div>
+            <span id="error-message-password" class="error-message"></span>
             <div class="field">
               <input
                 type="password"
@@ -75,6 +78,10 @@
               />
               <label for="confirm-password">Confirm Password</label>
             </div>
+            <span
+              id="error-message-confirm-password"
+              class="error-message"
+            ></span>
 
             <button type="submit" class="btn-login" onclick="register(event)">
               <span>Sign Up</span>
@@ -85,10 +92,12 @@
             <a href="../index.html">Login here</a>
           </div>
           <div class="google-login-btn" id="googleRegisterBtn">
-            <img src="https://img.icons8.com/color/16/000000/google-logo.png" alt="Google Logo">
+            <img
+              src="https://img.icons8.com/color/16/000000/google-logo.png"
+              alt="Google Logo"
+            />
             Đăng nhập bằng Google
           </div>
-          
         </div>
       </div>
     </div>
@@ -98,7 +107,7 @@
   <script src="/js/sakura.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
-  <script src="https://apis.google.com/js/platform.js" async defer></script> <!-- Your custom script -->
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <!-- Your custom script -->
   <script src="/js/outh2.js"></script>
-
 </html>
