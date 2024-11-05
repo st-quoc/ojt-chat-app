@@ -126,7 +126,6 @@
 }
 .form .field {
   position: relative;
-  margin-bottom: 30px;
 }
 .form .field input {
   border: 1px solid #eee;
@@ -136,6 +135,14 @@
   border-radius: 12px;
   transition: all 0.25s linear;
   font-size: 16px;
+}
+.error-message {
+  color: red;
+  font-style: italic;
+  font-size: 13px;
+  display: inline-block;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 .form .field input:focus {
   border-color: #ff758f;
