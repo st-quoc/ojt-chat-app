@@ -28,9 +28,3 @@
 
 
 }
-
-@media screen and (max-width: 400px) {
-  .introduce .subtitle {
-    display: none;
-  }
-}

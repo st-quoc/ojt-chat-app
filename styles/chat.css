@@ -55,6 +55,7 @@ html[data-theme='light'] .btn-user-header svg {
   align-items: center;
   gap: 20px;
   user-select: none;
+  -webkit-user-select: none;
 }
 .chat-container header .btn-menu-mobile {
   display: none;
@@ -77,6 +78,7 @@ html[data-theme='light'] .btn-user-header svg {
   gap: 10px;
   width: 150px;
   user-select: none;
+  -webkit-user-select: none;
 }
 .chat-container header .btn-new-mobile svg {
   width: 20px;
@@ -142,12 +144,10 @@ html[data-theme='light'] .btn-user-header svg {
   display: block;
   cursor: pointer;
   color: #e55865;
-  
 }
 
 .body-chat {
   height: calc(100vh - 80px);
-  flex: 1;
   position: relative;
   width: 100%;
   max-width: 990px;
@@ -167,6 +167,7 @@ html[data-theme='light'] .btn-user-header svg {
   width: fit-content;
   font-size: 3rem;
   background-clip: text;
+  -webkit-background-clip: text;
   background: linear-gradient(to right, #4285f4, #d96570);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -221,6 +222,7 @@ html[data-theme='light'] .btn-user-header svg {
   outline: none;
   background: transparent;
   user-select: none;
+  -webkit-user-select: none;
 }
 html[data-theme='dark'] .typing-area .typing-form .btn-send svg {
   fill: #fff;
