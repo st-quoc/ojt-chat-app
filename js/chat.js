@@ -516,6 +516,8 @@ const loadSessions = async () => {
         li.classList.add('session-item');
 
         const text = document.createElement('p');
+        text.style.cursor = 'pointer';
+        text.style.width = '100%';
         text.innerText = session.firstMessage;
         text.title = session.firstMessage;
         const picked = localStorage.getItem('picked_sessionId');
@@ -533,13 +535,14 @@ const loadSessions = async () => {
         deleteButton.innerText = 'x';
         deleteButton.title = 'Delete session';
         deleteButton.classList.add('delete-session-button');
+        deleteButton.style.cursor = 'pointer';
         deleteButton.addEventListener('click', async (event) => {
           await deleteSessionById(session._id);
         });
 
         li.appendChild(deleteButton);
 
-        li.addEventListener('click', async () => {
+        text.addEventListener('click', async () => {
           localStorage.setItem('picked_sessionId', session._id);
           document.querySelectorAll('.session-item').forEach((item) => {
             item.style.backgroundColor = 'transparent';
