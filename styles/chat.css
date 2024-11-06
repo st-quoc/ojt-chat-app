@@ -305,6 +305,7 @@ html[data-theme='light'] .typing-area .typing-form .btn-send svg {
   border-radius: 6px;
   width: 100%;
   overflow-y: auto;
+  word-break: break-all;
 }
 
 .chat-list .message.error .text {
