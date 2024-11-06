@@ -11,10 +11,10 @@ let userMessage = null;
 let isResponseGenerating = false;
 const sessionId = localStorage.getItem('picked_sessionId');
 
-const API_KEY = 'AIzaSyA7hjj7yYZuSNuT_95krbg5lT7qs_j85pM';
+const API_KEY = 'AIzaSyAkfVdz414q0xPILyMJ748e-mzx_rIe5d4';
 // const BASE_URL = 'http://localhost:3000';
 const BASE_URL = 'https://arcane-sea-85415-cb9bc29a925f.herokuapp.com';
-const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
 
 async function getAllSessions() {
   const userId = sessionStorage.getItem('userID');
